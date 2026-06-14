@@ -1,0 +1,12 @@
+btop
+fastfetch
+cava
+cmatrix
+yazi
+prismlauncher
+kdenlive
+ardour
+localsend
+steam
+mangohud
+audacious
