@@ -158,7 +158,7 @@ while true; do
 
     CHOICE=$(
         gum choose \
-            --cursor="▶ " \
+            --cursor=" ▶ " \
             --cursor.foreground="39" \
             --selected.foreground="39" \
             --height=8 \

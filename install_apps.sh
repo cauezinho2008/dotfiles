@@ -4,16 +4,17 @@
 # Gum colors
 # ==========================================================
 
+
 # ==========================================================
 # Gum theme
 # ==========================================================
 
 export GUM_CHOOSE_CURSOR_FOREGROUND="#6A9EFF"
 export GUM_CHOOSE_SELECTED_FOREGROUND="#6A9EFF"
-export GUM_CHOOSE_HEADER_FOREGROUND="#4A6FA5"
 
 export GUM_CONFIRM_PROMPT_FOREGROUND="#6A9EFF"
-export GUM_CONFIRM_SELECTED_FOREGROUND="#6A9EFF"
+export GUM_CONFIRM_SELECTED_FOREGROUND="#FFFFFF"
+export GUM_CONFIRM_SELECTED_BACKGROUND="#217CB5"
 
 export GUM_INPUT_CURSOR_FOREGROUND="#6A9EFF"
 export GUM_SPIN_SPINNER_FOREGROUND="#6A9EFF"
@@ -99,10 +100,10 @@ DISPLAY_LIST=()
 
 for pkg in "${PACKAGES[@]}"; do
     if $PKG_CHECK "$pkg" >/dev/null 2>&1; then
-        # Installed -> gray
-        DISPLAY_LIST+=($'\033[2m✓ '"$pkg"$'\033[0m')
+        # Installed: dim + strikethrough (if terminal supports it)
+        DISPLAY_LIST+=($'\033[2;9m'"$pkg"$'\033[0m')
     else
-        DISPLAY_LIST+=("○ $pkg")
+        DISPLAY_LIST+=("$pkg")
     fi
 done
 
@@ -113,38 +114,52 @@ done
 SELECTED=$(
     printf "%s\n" "${DISPLAY_LIST[@]}" |
     fzf \
-        --color=bg:-1,bg+:#112240,fg:#d0d0d0,fg+:#ffffff \
---color=border:#4A6FA5,header:#6A9EFF,info:#6A9EFF \
---color=pointer:#6A9EFF,marker:#6A9EFF,prompt:#6A9EFF \
---color=spinner:#6A9EFF,hl:#6A9EFF,hl+:#8BB8FF \
---multi \
+        --multi \
         --ansi \
         --layout=reverse \
         --border=rounded \
         --height=75% \
-        --prompt="search:" \
-        --pointer="▶" \
-        --marker="✓" \
-        --header=$'' \
+        --prompt="search: " \
+        --pointer="▶ " \
+        --marker="* " \
+        --bind 'tab:toggle' \
         --bind 'ctrl-a:select-all' \
         --bind 'ctrl-d:deselect-all' \
         --bind 'esc:abort' \
+        --color=bg:-1,bg+:#112240,fg:#d0d0d0,fg+:#ffffff \
+        --color=border:#4A6FA5,header:#6A9EFF,info:#6A9EFF \
+        --color=pointer:#6A9EFF,marker:#6A9EFF,prompt:#6A9EFF \
+        --color=spinner:#6A9EFF,hl:#6A9EFF,hl+:#8BB8FF \
         --preview "
 bash -c '
-pkg=\"\$1\"
-pkg=\${pkg#??}
-pkg=\$(printf \"%s\" \"\$pkg\" | sed \"s/\x1b\[[0-9;]*m//g\")
+pkg=\$(printf \"%s\" \"\$1\" | sed \"s/\x1b\[[0-9;]*m//g\")
 
-if $PKG_CHECK \"\$pkg\" >/dev/null 2>&1; then
-    echo \"✓ Already installed\"
-    echo
-    $PKG_INFO \"\$pkg\" 2>/dev/null | head -15
-else
-    $PKG_INFO \"\$pkg\" 2>/dev/null | head -20
-fi
+case \"$ID\" in
+    arch|cachyos|endeavouros|manjaro)
+        if pacman -Q \"\$pkg\" >/dev/null 2>&1; then
+            echo \"Installed on this system\"
+            echo
+        fi
+        pacman -Si \"\$pkg\" 2>/dev/null
+        ;;
+    ubuntu|debian|linuxmint|pop)
+        dpkg -s \"\$pkg\" >/dev/null 2>&1 && {
+            echo \"Installed on this system\"
+            echo
+        }
+        apt show \"\$pkg\" 2>/dev/null
+        ;;
+    fedora)
+        rpm -q \"\$pkg\" >/dev/null 2>&1 && {
+            echo \"Installed on this system\"
+            echo
+        }
+        dnf info \"\$pkg\" 2>/dev/null
+        ;;
+esac
 ' _ {}
-"\
-        --preview-window=right:55%
+" \
+        --preview-window=right:55%:wrap
 ) || exit 0
 
 # ==========================================================
@@ -156,7 +171,9 @@ TO_INSTALL=()
 while IFS= read -r line; do
     [[ -z "$line" ]] && continue
 
-    pkg=$(echo "$line" | sed 's/^[✓○] //' | sed 's/\x1b\[[0-9;]*m//g')
+  pkg=$(printf "%s" "$line" |
+    sed 's/\x1b\[[0-9;]*m//g' |
+    xargs)
 
     if ! $PKG_CHECK "$pkg" >/dev/null 2>&1; then
         TO_INSTALL+=("$pkg")
