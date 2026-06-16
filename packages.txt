@@ -10,3 +10,7 @@ localsend
 steam
 mangohud
 audacious
+oh-my-posh-bin
+git
+helium-browser-bin
+blender

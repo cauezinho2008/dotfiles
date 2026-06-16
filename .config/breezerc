@@ -1,0 +1,7 @@
+[Common]
+OutlineCloseButton=true
+ShadowSize=ShadowSmall
+
+[Style]
+MenuOpacity=39
+WindowDragMode=WD_FULL
