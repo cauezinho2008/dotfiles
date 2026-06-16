@@ -1,228 +1,223 @@
 #!/usr/bin/env bash
-set -e
+
+set -euo pipefail
+
+# ==========================================================
+# Cauê's Dotfiles Installer
+# ==========================================================
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-BACKUP_DIR="$HOME/.dotfiles-backup"
 
-PACKAGES_FILE="$REPO_DIR/packages.txt"
+APP_SCRIPT="$REPO_DIR/install_apps.sh"
+COPY_SCRIPT="$REPO_DIR/copy_dotfiles.sh"
+APPEARANCE_SCRIPT="$REPO_DIR/appearance.sh"
+RESTORE_SCRIPT="$REPO_DIR/restore_backup.sh"
 
-# =========================
-
-# Load packages
-
-# =========================
-
-if [[ -f "$PACKAGES_FILE" ]]; then
-mapfile -t PACKAGES < "$PACKAGES_FILE"
-else
-echo "packages.txt not found!"
-exit 1
-fi
-
-# =========================
-
+# ==========================================================
 # Detect distro
-
-# =========================
+# ==========================================================
 
 source /etc/os-release
 
-case "$ID" in
-arch|cachyos|endeavouros|manjaro)
-PKG_INSTALL="sudo pacman -S --needed"
-PKG_CHECK="pacman -Q"
-;;
-ubuntu|debian|linuxmint|pop)
-PKG_INSTALL="sudo apt install -y"
-PKG_CHECK="dpkg -s"
-sudo apt update
-;;
-fedora)
-PKG_INSTALL="sudo dnf install -y"
-PKG_CHECK="rpm -q"
-;;
-*)
-echo "Unsupported distro: $ID"
-exit 1
-;;
-esac
+DISTRO_ID="$ID"
+DISTRO_NAME="$PRETTY_NAME"
 
-echo "Detected: $PRETTY_NAME"
-echo
-
-# =========================
-
-# Check missing packages
-
-# =========================
-
-MISSING=()
-
-for pkg in "${PACKAGES[@]}"; do
-if ! $PKG_CHECK "$pkg" >/dev/null 2>&1; then
-MISSING+=("$pkg")
-fi
-done
-
-# =========================
-
-# Install packages
-
-# =========================
-
-if [[ ${#MISSING[@]} -eq 0 ]]; then
-echo "All packages already installed."
-else
-echo "Missing packages:"
-printf " - %s\n" "${MISSING[@]}"
-echo
-
-```
-read -rp "Install packages? [A]ll / [S]elect / [N]one: " choice
-
-case "${choice,,}" in
-    a|"")
-        $PKG_INSTALL "${MISSING[@]}"
+case "$DISTRO_ID" in
+    arch|cachyos|endeavouros|manjaro)
+        INSTALL_CMD="sudo pacman -Sy --needed"
+        REMOVE_CMD="sudo pacman -Rns --noconfirm"
         ;;
-    s)
-        echo "Enter numbers (space separated):"
-        for i in "${!MISSING[@]}"; do
-            echo "$((i+1))) ${MISSING[$i]}"
-        done
-        read -rp "> " sel
-
-        INSTALL=()
-        for n in $sel; do
-            [[ "$n" =~ ^[0-9]+$ ]] && INSTALL+=("${MISSING[$((n-1))]}")
-        done
-
-        [[ ${#INSTALL[@]} -gt 0 ]] && $PKG_INSTALL "${INSTALL[@]}"
+    ubuntu|debian|linuxmint|pop)
+        INSTALL_CMD="sudo apt update && sudo apt install -y"
+        REMOVE_CMD="sudo apt remove -y"
+        ;;
+    fedora)
+        INSTALL_CMD="sudo dnf install -y"
+        REMOVE_CMD="sudo dnf remove -y"
         ;;
     *)
-        echo "Skipping package installation."
+        echo "Unsupported distribution:"
+        echo "$DISTRO_NAME"
+        exit 1
         ;;
 esac
-```
 
-fi
+# ==========================================================
+# Dependency check
+# ==========================================================
 
-# =========================
+DEPS=(gum fzf chafa)
+INSTALLED_NOW=()
+MISSING=()
 
-# Backup system
-
-# =========================
-
-echo
-read -rp "Backup existing configs before overwrite? [Y/n]: " do_backup
-
-if [[ "${do_backup,,}" != "n" ]]; then
-TS="$(date +%Y%m%d-%H%M%S)"
-CURRENT_BACKUP="$BACKUP_DIR/$TS"
-
-```
-echo "Creating backup at $CURRENT_BACKUP ..."
-mkdir -p "$CURRENT_BACKUP"
-
-for item in "$REPO_DIR"/.*; do
-    base="$(basename "$item")"
-
-    case "$base" in
-        "."|".."|".git"|".github")
-            continue
-            ;;
-    esac
-
-    if [[ -e "$HOME/$base" ]]; then
-        cp -a "$HOME/$base" "$CURRENT_BACKUP/" 2>/dev/null || true
+for dep in "${DEPS[@]}"; do
+    if ! command -v "$dep" >/dev/null 2>&1; then
+        MISSING+=("$dep")
     fi
 done
 
-echo "Backup done."
-```
+if [[ ${#MISSING[@]} -gt 0 ]]; then
+    echo
+    echo "Required dependencies are missing:"
+    printf "  - %s\n" "${MISSING[@]}"
+    echo
 
-else
-echo "Skipping backup."
+    read -rp "Install them now? [Y/n]: " ans
+
+    if [[ "${ans,,}" == "n" ]]; then
+        echo "Cannot continue."
+        exit 1
+    fi
+
+    for dep in "${MISSING[@]}"; do
+        echo "Installing $dep..."
+        eval "$INSTALL_CMD $dep"
+        INSTALLED_NOW+=("$dep")
+    done
 fi
 
-# =========================
+# ==========================================================
+# Gum colors
+# ==========================================================
 
-# Restore system
+#export GUM_CHOOSE_CURSOR_FOREGROUND="39"
+#export GUM_CHOOSE_SELECTED_FOREGROUND="39"
+#export GUM_CHOOSE_HEADER_FOREGROUND="39"
+#export GUM_CONFIRM_PROMPT_FOREGROUND="39"
+#export GUM_CONFIRM_SELECTED_FOREGROUND="39"
+#export GUM_SPIN_SPINNER_FOREGROUND="39"
+# ==========================================================
+# Gum theme
+# ==========================================================
 
-# =========================
+export GUM_CHOOSE_CURSOR_FOREGROUND="#6A9EFF"
+export GUM_CHOOSE_SELECTED_FOREGROUND="#6A9EFF"
+export GUM_CHOOSE_HEADER_FOREGROUND="#4A6FA5"
 
+export GUM_CONFIRM_PROMPT_FOREGROUND="#6A9EFF"
+export GUM_CONFIRM_SELECTED_FOREGROUND="#6A9EFF"
+
+export GUM_INPUT_CURSOR_FOREGROUND="#6A9EFF"
+export GUM_SPIN_SPINNER_FOREGROUND="#6A9EFF"
+# ==========================================================
+# UI helpers
+# ==========================================================
+
+draw_header() {
+    clear
+
+    gum style \
+        --foreground 39 \
+        --bold \
+        --align center \
+"Cauê's Dotfiles Installer"
 echo
-read -rp "Restore configs? [A]ll / [S]elect / [N]one: " restore_choice
 
-restore_item() {
-local src="$1"
-local name
-name="$(basename "$src")"
+    gum style \
+        --foreground 33 \
+        --align center \
+"$(echo "$DISTRO_NAME" | cut -d' ' -f1) detected"
 
-```
-if [[ "$name" == ".config" ]]; then
-    mkdir -p "$HOME/.config"
-    cp -a "$src/." "$HOME/.config/"
-else
-    cp -a "$src" "$HOME/"
-fi
-```
 
 }
 
-case "${restore_choice,,}" in
-a|"")
-for item in "$REPO_DIR"/.*; do
-base="$(basename "$item")"
-case "$base" in
-"."|".."|".git"|".github")
-continue
-;;
-esac
-restore_item "$item"
+run_script() {
+    local script="$1"
+    local title="$2"
+
+    clear
+
+    if [[ ! -f "$script" ]]; then
+        gum style \
+            --border normal \
+            --border-foreground 196 \
+            --width 52 \
+            --align center \
+"$title
+
+Script not found."
+        echo
+        read -rp "Press Enter to return..."
+        return
+    fi
+
+    bash "$script"
+
+    #echo
+    #read -rp "Press Enter to return to the menu..."
+}
+
+# ==========================================================
+# Main menu
+# ==========================================================
+
+while true; do
+
+    draw_header
+    echo
+
+    CHOICE=$(
+        gum choose \
+            --cursor="▶ " \
+            --cursor.foreground="39" \
+            --selected.foreground="39" \
+            --height=8 \
+            "Applications" \
+            "Copy dotfiles" \
+            "Themes & wallpaper" \
+            "Restore backup" \
+            "Exit"
+    )
+
+    case "$CHOICE" in
+
+        "Applications")
+            run_script "$APP_SCRIPT" "Application installer"
+            ;;
+
+        "Copy dotfiles")
+            run_script "$COPY_SCRIPT" "Copy dotfiles"
+            ;;
+
+        "Themes & wallpaper")
+            run_script "$APPEARANCE_SCRIPT" "Appearance manager"
+            ;;
+
+        "Restore backup")
+            run_script "$RESTORE_SCRIPT" "Restore backup"
+            ;;
+
+        "Exit"|*)
+            break
+            ;;
+
+    esac
+
 done
-;;
-s)
-for item in "$REPO_DIR"/.*; do
-base="$(basename "$item")"
-case "$base" in
-"."|".."|".git"|".github")
-continue
-;;
-esac
 
-```
-        read -rp "Restore $base ? [Y/n]: " ans
-        [[ "${ans,,}" != "n" ]] && restore_item "$item"
-    done
-    ;;
-*)
-    echo "Skipping restore."
-    ;;
-```
+# ==========================================================
+# Cleanup
+# ==========================================================
 
-esac
+clear
 
-# =========================
+if [[ ${#INSTALLED_NOW[@]} -gt 0 ]]; then
+    echo
 
-# Backup restore menu
-
-# =========================
-
-echo
-echo "Backup history:"
-ls "$BACKUP_DIR" 2>/dev/null || echo "No backups found"
-
-read -rp "Restore a previous backup? (enter folder name or leave empty): " restore_old
-
-if [[ -n "$restore_old" ]]; then
-OLD="$BACKUP_DIR/$restore_old"
-if [[ -d "$OLD" ]]; then
-cp -a "$OLD"/. "$HOME/"
-echo "Backup restored."
-else
-echo "Backup not found."
+    if gum confirm "Remove temporary dependencies before exiting?"; then
+        case "$DISTRO_ID" in
+            arch|cachyos|endeavouros|manjaro)
+                sudo pacman -Rns --noconfirm "${INSTALLED_NOW[@]}"
+                ;;
+            ubuntu|debian|linuxmint|pop)
+                sudo apt remove -y "${INSTALLED_NOW[@]}"
+                ;;
+            fedora)
+                sudo dnf remove -y "${INSTALLED_NOW[@]}"
+                ;;
+        esac
+    fi
 fi
-fi
+clear
+exit 0
 
-echo
-echo "Done."
