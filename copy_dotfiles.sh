@@ -64,7 +64,7 @@ esac
 INSTALLED_NOW=()
 MISSING=()
 
-for dep in timg fzf gum; do
+for dep in chafa fzf gum; do
     if ! command -v "$dep" >/dev/null 2>&1; then
         MISSING+=("$dep")
     fi
@@ -202,21 +202,11 @@ SELECTED=$(
         --color=border:#4A6FA5,header:#6A9EFF,info:#6A9EFF \
         --color=pointer:#6A9EFF,marker:#6A9EFF,prompt:#6A9EFF \
         --color=spinner:#6A9EFF,hl:#6A9EFF,hl+:#8BB8FF \
-       --preview "
+        --preview "
 bash -c '
-item=\$(printf \"%s\" \"\$1\" | sed \"s/\x1b\\[[0-9;]*m//g\")
+item=\"\$1\"
 name=\$(basename \"\$item\")
-img=\"$PREVIEW_DIR/\${name}.png\"
-
-if [[ -f \"\$img\" ]]; then
-    \"$REPO_DIR/preview_image.sh\" \"\$img\"
-else
-    echo
-    echo \"No preview available.\"
-    echo
-    echo \"Item:\"
-    echo \"  \$item\"
-fi
+\"$REPO_DIR/preview_image.sh\" \"\$name\"
 ' _ {}
 "\
         --preview-window=right:55%:wrap
