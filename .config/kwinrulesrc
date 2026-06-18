@@ -1,0 +1,12 @@
+[096c6998-0aab-4bf0-824d-a36c46de42c0]
+Description=Application settings for org.kde.konsole
+above=true
+aboverule=3
+noborderrule=3
+wmclass=konsole org.kde.konsole
+wmclasscomplete=true
+wmclassmatch=1
+
+[General]
+count=1
+rules=096c6998-0aab-4bf0-824d-a36c46de42c0

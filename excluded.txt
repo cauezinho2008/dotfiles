@@ -1,0 +1,49 @@
+# =========================
+# Plasma appearance/state
+# =========================
+
+kdeglobals
+plasmarc
+plasmashellrc
+plasma-org.kde.plasma.desktop-appletsrc
+
+kwinrc
+kwinrulesrc
+
+kglobalshortcutsrc
+kxkbrc
+
+powerdevilrc
+powermanagementprofilesrc
+
+ksmserverrc
+kactivitymanagerdrc
+
+plasmanotifyrc
+discoverrc
+
+baloofilerc
+dolphinrc
+
+gtkrc
+gtk-3.0
+gtk-4.0
+
+kscreenlockerrc
+kcminputrc
+
+# =========================
+# Shared appearance assets
+# =========================
+
+plasma
+color-schemes
+dolphin
+
+# =========================
+# Fonts
+# =========================
+
+fonts
+wallpapers
+previews
