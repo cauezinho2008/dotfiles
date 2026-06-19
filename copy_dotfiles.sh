@@ -24,7 +24,6 @@ REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 CONFIG_DIR="$REPO_DIR/.config"
 LOCAL_SHARE_DIR="$REPO_DIR/.local/share"
-POSH_DIR="$REPO_DIR/.poshthemes"
 
 HOOKS_DIR="$REPO_DIR/hooks"
 PREVIEW_DIR="$REPO_DIR/preview"
@@ -90,7 +89,6 @@ scan_dir() {
 
 scan_dir "$CONFIG_DIR"
 scan_dir "$LOCAL_SHARE_DIR"
-scan_dir "$POSH_DIR"
 
 # hooks-only entries
 if [[ -d "$HOOKS_DIR" ]]; then
@@ -147,8 +145,7 @@ if gum confirm "Create backup before applying?"; then
 
     mkdir -p \
         "$BACKUP_DIR/.config" \
-        "$BACKUP_DIR/.local/share" \
-        "$BACKUP_DIR/.poshthemes"
+        "$BACKUP_DIR/.local/share"
 fi
 
 # ==========================================================
@@ -176,14 +173,6 @@ while IFS= read -r name; do
         cp -a "$LOCAL_SHARE_DIR/$name" "$HOME/.local/share/"
     fi
 
-    # poshthemes
-    if [[ -e "$POSH_DIR/$name" ]]; then
-        [[ -e "$HOME/.poshthemes/$name" && -d "${BACKUP_DIR:-}" ]] &&
-            cp -a "$HOME/.poshthemes/$name" "$BACKUP_DIR/.poshthemes/" || true
-
-        mkdir -p "$HOME/.poshthemes"
-        cp -a "$POSH_DIR/$name" "$HOME/.poshthemes/"
-    fi
 
     # hooks
     if [[ -f "$HOOKS_DIR/$name.sh" ]]; then
