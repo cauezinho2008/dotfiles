@@ -19,4 +19,4 @@ git clone --depth=1 "$REPO_URL" "$TEMP_DIR" >/dev/null 2>&1
 
 cd "$TEMP_DIR"
 
-exec bash "$TEMP_DIR/main.sh"
+bash "$TEMP_DIR/main.sh"
