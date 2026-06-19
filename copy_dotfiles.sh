@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 
-# ==========================================================
-# Cauê's Dotfiles Installer - Copy Dotfiles
-# ==========================================================
-
 set -euo pipefail
 
 # ==========================================================
-# Gum theme
+# Theme
 # ==========================================================
 
 export GUM_CHOOSE_CURSOR_FOREGROUND="#6A9EFF"
@@ -30,63 +26,13 @@ CONFIG_DIR="$REPO_DIR/.config"
 LOCAL_SHARE_DIR="$REPO_DIR/.local/share"
 POSH_DIR="$REPO_DIR/.poshthemes"
 
+HOOKS_DIR="$REPO_DIR/hooks"
 PREVIEW_DIR="$REPO_DIR/preview"
+
 EXCLUDED_FILE="$REPO_DIR/excluded.txt"
 
 BACKUP_ROOT="$HOME/.dotfiles-backup"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
-
-# ==========================================================
-# Dependency check
-# ==========================================================
-
-source /etc/os-release
-
-case "$ID" in
-    arch|cachyos|endeavouros|manjaro)
-        INSTALL_CMD="sudo pacman -S --needed"
-        REMOVE_CMD="sudo pacman -Rns --noconfirm"
-        ;;
-    ubuntu|debian|linuxmint|pop)
-        INSTALL_CMD="sudo apt update && sudo apt install -y"
-        REMOVE_CMD="sudo apt remove -y"
-        ;;
-    fedora)
-        INSTALL_CMD="sudo dnf install -y"
-        REMOVE_CMD="sudo dnf remove -y"
-        ;;
-    *)
-        echo "Unsupported distribution."
-        exit 1
-        ;;
-esac
-
-INSTALLED_NOW=()
-MISSING=()
-
-for dep in chafa fzf gum; do
-    if ! command -v "$dep" >/dev/null 2>&1; then
-        MISSING+=("$dep")
-    fi
-done
-
-if [[ ${#MISSING[@]} -gt 0 ]]; then
-    echo
-    echo "Required dependencies are missing:"
-    printf "  - %s\n" "${MISSING[@]}"
-    echo
-
-    read -rp "Install them now? [Y/n]: " ans
-
-    if [[ "${ans,,}" == "n" ]]; then
-        exit 1
-    fi
-
-    for dep in "${MISSING[@]}"; do
-        eval "$INSTALL_CMD $dep"
-        INSTALLED_NOW+=("$dep")
-    done
-fi
 
 # ==========================================================
 # Header
@@ -94,30 +40,13 @@ fi
 
 clear
 
-gum style \
-    --foreground 39 \
-    --bold \
-    --align center \
-"Copy Dotfiles"
-
+gum style --foreground 39 --bold --align center "Copy Dotfiles"
 echo
-
-gum style \
-    --foreground 33 \
-    --align center \
-"Repository: $(basename "$REPO_DIR")"
-
-echo
-
-gum style \
-    --foreground 33 \
-    --align center \
-"Tab: Toggle   Ctrl+A: All   Ctrl+D: None   Enter: Copy"
-
+gum style --foreground 33 --align center "Tab: Toggle   Ctrl+A: All   Ctrl+D: None   Enter: Apply"
 echo
 
 # ==========================================================
-# Load exclusions
+# Exclusions
 # ==========================================================
 
 EXCLUDED=()
@@ -130,62 +59,63 @@ if [[ -f "$EXCLUDED_FILE" ]]; then
 fi
 
 is_excluded() {
-    local p="$1"
+    local item="$1"
 
     for ex in "${EXCLUDED[@]}"; do
-        [[ "$p" == "$ex" ]] && return 0
+        [[ "$item" == "$ex" ]] && return 0
     done
 
     return 1
 }
 
 # ==========================================================
-# Build item database
+# Build item registry
 # ==========================================================
+
+declare -A ITEMS
+
+scan_dir() {
+    local dir="$1"
+
+    [[ ! -d "$dir" ]] && return
+
+    while IFS= read -r item; do
+        name="$(basename "$item")"
+
+        is_excluded "$name" && continue
+
+        ITEMS["$name"]=1
+    done < <(find "$dir" -mindepth 1 -maxdepth 1 | sort)
+}
+
+scan_dir "$CONFIG_DIR"
+scan_dir "$LOCAL_SHARE_DIR"
+scan_dir "$POSH_DIR"
+
+# hooks-only entries
+if [[ -d "$HOOKS_DIR" ]]; then
+    while IFS= read -r hook; do
+        name="$(basename "$hook" .sh)"
+
+        is_excluded "$name" && continue
+
+        ITEMS["$name"]=1
+    done < <(find "$HOOKS_DIR" -type f -name "*.sh" | sort)
+fi
 
 DISPLAY_LIST=()
-REAL_PATHS=()
 
-# .config
-if [[ -d "$CONFIG_DIR" ]]; then
-    while IFS= read -r item; do
-        rel=".config/$(basename "$item")"
-
-        is_excluded "$rel" && continue
-
-        DISPLAY_LIST+=("$(basename "$item")")
-        REAL_PATHS+=("$rel")
-
-    done < <(find "$CONFIG_DIR" -mindepth 1 -maxdepth 1 | sort)
-fi
-
-# .local/share
-if [[ -d "$LOCAL_SHARE_DIR" ]]; then
-    while IFS= read -r item; do
-        rel=".local/share/$(basename "$item")"
-
-        is_excluded "$rel" && continue
-
-        DISPLAY_LIST+=("$(basename "$item")")
-        REAL_PATHS+=("$rel")
-
-    done < <(find "$LOCAL_SHARE_DIR" -mindepth 1 -maxdepth 1 | sort)
-fi
-
-# .poshthemes
-if [[ -d "$POSH_DIR" ]]; then
-    is_excluded ".poshthemes" || {
-        DISPLAY_LIST+=(".poshthemes")
-        REAL_PATHS+=(".poshthemes")
-    }
-fi
+for item in "${!ITEMS[@]}"; do
+    DISPLAY_LIST+=("$item")
+done
 
 # ==========================================================
-# fzf selection
+# Selection
 # ==========================================================
 
 SELECTED=$(
     printf "%s\n" "${DISPLAY_LIST[@]}" |
+    sort |
     fzf \
         --multi \
         --layout=reverse \
@@ -202,142 +132,66 @@ SELECTED=$(
         --color=border:#4A6FA5,header:#6A9EFF,info:#6A9EFF \
         --color=pointer:#6A9EFF,marker:#6A9EFF,prompt:#6A9EFF \
         --color=spinner:#6A9EFF,hl:#6A9EFF,hl+:#8BB8FF \
-        --preview "
-bash -c '
-item=\"\$1\"
-name=\$(basename \"\$item\")
-\"$REPO_DIR/preview_image.sh\" \"\$name\"
-' _ {}
-"\
+        --preview "$REPO_DIR/preview.sh {} config"\
         --preview-window=right:55%:wrap
 ) || exit 0
 
-# ==========================================================
-# Resolve selected paths
-# ==========================================================
-
-TO_COPY=()
-
-while IFS= read -r selected; do
-    [[ -z "$selected" ]] && continue
-
-    for i in "${!DISPLAY_LIST[@]}"; do
-        if [[ "${DISPLAY_LIST[$i]}" == "$selected" ]]; then
-            TO_COPY+=("${REAL_PATHS[$i]}")
-            break
-        fi
-    done
-
-done <<< "$SELECTED"
-
-if [[ ${#TO_COPY[@]} -eq 0 ]]; then
-    exit 0
-fi
+[[ -z "$SELECTED" ]] && exit 0
 
 # ==========================================================
-# Backup prompt
+# Backup
 # ==========================================================
 
-echo
-
-BACKUP=false
-
-if gum confirm "Create a backup before copying?"; then
-    BACKUP=true
+if gum confirm "Create backup before applying?"; then
     BACKUP_DIR="$BACKUP_ROOT/$TIMESTAMP"
 
     mkdir -p \
         "$BACKUP_DIR/.config" \
-        "$BACKUP_DIR/.local/share"
-
-    for item in "${TO_COPY[@]}"; do
-        case "$item" in
-            .config/*)
-                name="$(basename "$item")"
-                [[ -e "$HOME/.config/$name" ]] &&
-                    cp -a "$HOME/.config/$name" "$BACKUP_DIR/.config/"
-                ;;
-            .local/share/*)
-                name="$(basename "$item")"
-                [[ -e "$HOME/.local/share/$name" ]] &&
-                    cp -a "$HOME/.local/share/$name" "$BACKUP_DIR/.local/share/"
-                ;;
-            .poshthemes)
-                [[ -e "$HOME/.poshthemes" ]] &&
-                    cp -a "$HOME/.poshthemes" "$BACKUP_DIR/"
-                ;;
-        esac
-    done
+        "$BACKUP_DIR/.local/share" \
+        "$BACKUP_DIR/.poshthemes"
 fi
 
 # ==========================================================
-# Confirmation
+# Apply
 # ==========================================================
 
-clear
+while IFS= read -r name; do
+    [[ -z "$name" ]] && continue
 
-gum style \
-    --foreground 39 \
-    --bold \
-    --align center \
-"Copy Dotfiles"
+    gum spin --spinner dot --title "Applying $name..." -- sleep 0.1
 
-echo
+    # config
+    if [[ -e "$CONFIG_DIR/$name" ]]; then
+        [[ -e "$HOME/.config/$name" && -d "${BACKUP_DIR:-}" ]] &&
+            cp -a "$HOME/.config/$name" "$BACKUP_DIR/.config/" || true
 
-gum style \
-    --foreground 33 \
-    --align center \
-"The following items will be copied"
-
-echo
-
-for item in "${TO_COPY[@]}"; do
-    printf "  • %s\n" "$item"
-done
-
-echo
-
-gum confirm "Continue?" || exit 0
-
-# ==========================================================
-# Copy
-# ==========================================================
-
-mkdir -p "$HOME/.config"
-mkdir -p "$HOME/.local/share"
-
-gum spin --spinner dot --title "Copying selected dotfiles..." -- sleep 0.1
-
-for item in "${TO_COPY[@]}"; do
-    case "$item" in
-        .config/*)
-            cp -a "$REPO_DIR/$item" "$HOME/.config/"
-            ;;
-        .local/share/*)
-            cp -a "$REPO_DIR/$item" "$HOME/.local/share/"
-            ;;
-        .poshthemes)
-            cp -a "$REPO_DIR/.poshthemes" "$HOME/"
-            ;;
-    esac
-done
-
-echo
-gum style \
-    --foreground 39 \
-    --align center \
-"Copy complete."
-
-# ==========================================================
-# Cleanup
-# ==========================================================
-
-if [[ ${#INSTALLED_NOW[@]} -gt 0 ]]; then
-    echo
-
-    if gum confirm "Remove temporary dependencies?"; then
-        eval "$REMOVE_CMD ${INSTALLED_NOW[*]}"
+        cp -a "$CONFIG_DIR/$name" "$HOME/.config/"
     fi
-fi
 
-exit 0
+    # local share
+    if [[ -e "$LOCAL_SHARE_DIR/$name" ]]; then
+        [[ -e "$HOME/.local/share/$name" && -d "${BACKUP_DIR:-}" ]] &&
+            cp -a "$HOME/.local/share/$name" "$BACKUP_DIR/.local/share/" || true
+
+        cp -a "$LOCAL_SHARE_DIR/$name" "$HOME/.local/share/"
+    fi
+
+    # poshthemes
+    if [[ -e "$POSH_DIR/$name" ]]; then
+        [[ -e "$HOME/.poshthemes/$name" && -d "${BACKUP_DIR:-}" ]] &&
+            cp -a "$HOME/.poshthemes/$name" "$BACKUP_DIR/.poshthemes/" || true
+
+        mkdir -p "$HOME/.poshthemes"
+        cp -a "$POSH_DIR/$name" "$HOME/.poshthemes/"
+    fi
+
+    # hooks
+    if [[ -f "$HOOKS_DIR/$name.sh" ]]; then
+        bash "$HOOKS_DIR/$name.sh"
+    fi
+
+done <<< "$SELECTED"
+
+echo
+gum style --foreground 39 --align center "Done."
+echo
