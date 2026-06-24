@@ -7,4 +7,4 @@ source /usr/share/cachyos-fish-config/cachyos-config.fish
 #end
 
 
-oh-my-posh init fish --config /home/$HOME/.config/fish/oh_my_posh/blueish.omp.json | source
+oh-my-posh init fish --config ~/.config/fish/oh_my_posh/blueish.omp.json | source

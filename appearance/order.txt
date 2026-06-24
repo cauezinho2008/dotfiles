@@ -1,0 +1,8 @@
+font
+cursor
+wallpaper
+colorscheme
+kwin
+launcher
+plasmashell
+shortcuts
