@@ -106,7 +106,7 @@ Everything is split into folders so it’s easy to maintain, expand, or selectiv
 
 For a full breakdown of every script and how each section works, check:
 
-➡ **[Documentation](./docs/README.md)**
+➡ **[Documentation](.documentation.md)**
 
 
 ## Notes
