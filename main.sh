@@ -63,7 +63,7 @@ if [[ ${#MISSING[@]} -gt 0 ]]; then
     printf "  - %s\n" "${MISSING[@]}"
     echo
 
-    read -rp "Install them now? [Y/n]: " ans
+    read -rp "Install them now? [Y/n]: " ans < /dev/tty
 
     if [[ "${ans,,}" == "n" ]]; then
         echo "Cannot continue."
