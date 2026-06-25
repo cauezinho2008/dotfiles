@@ -25,7 +25,7 @@ DISTRO_NAME="$PRETTY_NAME"
 
 case "$DISTRO_ID" in
     arch|cachyos|endeavouros|manjaro)
-        INSTALL_CMD="sudo pacman -Sy --needed"
+        INSTALL_CMD="sudo pacman -Sy --needed --noconfirm"
         REMOVE_CMD="sudo pacman -Rns --noconfirm"
         ;;
     ubuntu|debian|linuxmint|pop)
