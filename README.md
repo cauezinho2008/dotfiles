@@ -35,7 +35,6 @@ The installer handles everything automatically:
 * installs any required dependencies
 * runs all scripts from there
 * removes temporary files after finishing
-* removes temporary files after finishing
 * can remove temporary dependencies if they were only needed for installation
 * **some modules may require `sudo` for system-wide installation (fonts, cursor themes, power profiles, etc.)**
 
@@ -106,7 +105,7 @@ Everything is split into folders so it’s easy to maintain, expand, or selectiv
 
 For a full breakdown of every script and how each section works, check:
 
-➡ **[Documentation](.documentation.md)**
+➡ **[Documentation](documentation.md)**
 
 
 ## Notes
@@ -115,3 +114,8 @@ For a full breakdown of every script and how each section works, check:
 * Designed around my own workflow and app selection
 * Works best on **Arch-based distros** (especially CachyOS)
 * Some scripts may require `sudo`
+
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file.
