@@ -1,12 +1,13 @@
-[096c6998-0aab-4bf0-824d-a36c46de42c0]
-Description=Application settings for org.kde.konsole
-above=true
-aboverule=3
-noborderrule=3
-wmclass=konsole org.kde.konsole
-wmclasscomplete=true
-wmclassmatch=1
-
 [General]
 count=1
-rules=096c6998-0aab-4bf0-824d-a36c46de42c0
+rules=cbbdcfdd-5c15-459e-896a-933b817bfd4a
+
+[cbbdcfdd-5c15-459e-896a-933b817bfd4a]
+Description=Window settings for java
+desktopfile=/home/caue/.local/share/applications/1.21.11 vk.desktop
+desktopfilerule=3
+desktops=7fa27feb-c29f-4e5c-a5fe-a9c4b1173664
+desktopsrule=3
+types=1
+wmclass=java
+wmclassmatch=1
