@@ -1,5 +1,6 @@
 btop
 fastfetch
+kitty
 cava
 cmatrix
 yazi
