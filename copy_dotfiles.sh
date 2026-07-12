@@ -30,9 +30,6 @@ PREVIEW_DIR="$REPO_DIR/preview"
 
 EXCLUDED_FILE="$REPO_DIR/excluded.txt"
 
-BACKUP_ROOT="$HOME/.dotfiles-backup"
-TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
-
 # ==========================================================
 # Header
 # ==========================================================
@@ -137,18 +134,6 @@ SELECTED=$(
 [[ -z "$SELECTED" ]] && exit 0
 
 # ==========================================================
-# Backup
-# ==========================================================
-
-if gum confirm "Create backup before applying?"; then
-    BACKUP_DIR="$BACKUP_ROOT/$TIMESTAMP"
-
-    mkdir -p \
-        "$BACKUP_DIR/.config" \
-        "$BACKUP_DIR/.local/share"
-fi
-
-# ==========================================================
 # Apply
 # ==========================================================
 
@@ -159,17 +144,11 @@ while IFS= read -r name; do
 
     # config
     if [[ -e "$CONFIG_DIR/$name" ]]; then
-        [[ -e "$HOME/.config/$name" && -d "${BACKUP_DIR:-}" ]] &&
-            cp -a "$HOME/.config/$name" "$BACKUP_DIR/.config/" || true
-
         cp -a "$CONFIG_DIR/$name" "$HOME/.config/"
     fi
 
     # local share
     if [[ -e "$LOCAL_SHARE_DIR/$name" ]]; then
-        [[ -e "$HOME/.local/share/$name" && -d "${BACKUP_DIR:-}" ]] &&
-            cp -a "$HOME/.local/share/$name" "$BACKUP_DIR/.local/share/" || true
-
         cp -a "$LOCAL_SHARE_DIR/$name" "$HOME/.local/share/"
     fi
 
