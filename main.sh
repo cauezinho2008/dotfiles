@@ -11,7 +11,7 @@ REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 CHAOTIC_SCRIPT="$REPO_DIR/setup_chaotic.sh"
 APP_SCRIPT="$REPO_DIR/install_apps.sh"
 COPY_SCRIPT="$REPO_DIR/copy_dotfiles.sh"
-APPEARANCE_SCRIPT="$REPO_DIR/appearance.sh"
+APPEARANCE_SCRIPT="$REPO_DIR/kde.sh"
 RESTORE_SCRIPT="$REPO_DIR/restore_backup.sh"
 
 # ==========================================================
@@ -171,7 +171,7 @@ MENU_ITEMS+=(
     "Applications"
     "Copy dotfiles"
     "Themes & wallpaper"
-    "Restore backup"
+    "KDE appearance"
     "Exit"
 )
 
@@ -198,8 +198,8 @@ CHOICE=$(
             run_script "$COPY_SCRIPT" "Copy dotfiles"
             ;;
 
-        "Themes & wallpaper")
-            run_script "$APPEARANCE_SCRIPT" "Appearance manager"
+        "KDE appearance")
+            run_script "$APPEARANCE_SCRIPT" "KDE appearance"
             ;;
 
         "Restore backup")
@@ -238,5 +238,55 @@ if [[ ${#INSTALLED_NOW[@]} -gt 0 ]]; then
     fi
 fi
 clear
+# ==========================================================
+# Reboot recommendation
+# ==========================================================
+
+clear
+
+gum style \
+    --foreground 214 \
+    --bold \
+    --align center \
+"Before you go..."
+
+echo
+
+gum style \
+    --foreground 245 \
+"Most changes are already active.
+
+If you installed applications or applied KDE appearance,
+a reboot is recommended to ensure everything is loaded correctly.
+
+This includes things such as:
+
+ • Fonts
+ • Cursor themes
+ • Global shortcuts
+ • Plasma components
+ • Newly installed applications and services
+
+You can continue using your system normally,
+but restarting now is recommended."
+
+echo
+
+CHOICE=$(
+    gum choose \
+        "Reboot now" \
+        "Reboot later"
+)
+
+case "$CHOICE" in
+    "Reboot now")
+        sudo reboot
+        ;;
+    "Reboot later"|*)
+        ;;
+esac
+
+clear
+exit 0
 exit 0
 

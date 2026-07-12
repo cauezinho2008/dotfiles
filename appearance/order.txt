@@ -3,6 +3,6 @@ cursor
 wallpaper
 colorscheme
 kwin
-launcher
+favorites
 plasmashell
 shortcuts

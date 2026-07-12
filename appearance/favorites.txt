@@ -1,0 +1,10 @@
+applications:ardour9.desktop
+applications:com.shellyorg.shelly.desktop
+applications:helium.desktop
+applications:kitty.desktop
+applications:localsend.desktop
+applications:org.kde.dolphin.desktop
+applications:org.kde.kdenlive.desktop
+applications:org.prismlauncher.PrismLauncher.desktop
+applications:steam.desktop
+applications:systemsettings.desktop

@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-FAVORITES="$REPO_DIR/launcher/favorites.txt"
+FAVORITES="$REPO_DIR/appearance/favorites.txt"
 
 [[ -f "$FAVORITES" ]] || exit 1
 

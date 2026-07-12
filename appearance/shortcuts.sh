@@ -3,15 +3,20 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-for file in kcminputrc kglobalshortcutsrc khotkeysrc; do
-    [[ -f "$REPO_DIR/.config/$file" ]] &&
-        cp -f "$REPO_DIR/.config/$file" "$HOME/.config/"
-done
+mkdir -p "$HOME/.config"
 
-kquitapp6 kglobalaccel 2>/dev/null \
-|| kquitapp5 kglobalaccel 2>/dev/null \
-|| true
+cp -f "$REPO_DIR/.config/kglobalshortcutsrc" \
+      "$HOME/.config/"
 
-kglobalaccel6 >/dev/null 2>&1 \
-|| kglobalaccel5 >/dev/null 2>&1 \
-|| true &
+# Reload the global shortcut daemon
+#if qdbus org.kde.kglobalaccel /component/kwin >/dev/null #2>&1; then
+#    qdbus org.kde.KGlobalAccel /kglobalaccel #org.kde.KGlobalAccel.reloadConfig >/dev/null 2>&1 || true
+#fi
+
+# Fallback: restart the daemon
+#kquitapp6 kglobalacceld >/dev/null 2>&1 || \
+#kquitapp5 kglobalacceld >/dev/null 2>&1 || true
+
+#sleep 1
+
+#kglobalacceld >/dev/null 2>&1 &

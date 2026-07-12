@@ -2,16 +2,31 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-WALLPAPER_DIR="$REPO_DIR/wallpapers"
+SRC_DIR="$REPO_DIR/wallpapers"
+DST_DIR="$HOME/Pictures/Wallpapers"
 
-mkdir -p "$HOME/Pictures/Wallpapers"
+mkdir -p "$DST_DIR"
 
-wallpaper="$(find "$WALLPAPER_DIR" -type f | head -n1)"
+wallpaper="$(find "$SRC_DIR" -maxdepth 1 -type f | head -n1)"
+[[ -z "$wallpaper" ]] && exit 0
 
-[[ -z "${wallpaper:-}" ]] && exit 0
+cp -f "$wallpaper" "$DST_DIR/"
 
-cp -f "$wallpaper" "$HOME/Pictures/Wallpapers/"
+WALL="$DST_DIR/$(basename "$wallpaper")"
 
-final="$HOME/Pictures/Wallpapers/$(basename "$wallpaper")"
+echo "Applying wallpaper..."
 
-plasma-apply-wallpaperimage "$final" >/dev/null 2>&1 || true
+# Desktop
+plasma-apply-wallpaperimage "$WALL" >/dev/null 2>&1 || true
+
+# Lock screen
+kwriteconfig6 \
+    --file kscreenlockerrc \
+    --group Greeter \
+    --group Wallpaper \
+    --group org.kde.image \
+    --group General \
+    --key Image \
+    "file://$WALL"
+
+echo "Wallpaper copied."
