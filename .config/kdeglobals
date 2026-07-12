@@ -134,7 +134,7 @@ ForegroundVisited=155,89,182
 
 [General]
 BrowserApplication=helium.desktop
-ColorSchemeHash=97fd94b6007e003d80a38f7edb27d4a9858171e5
+ColorScheme=BreezeDarker
 LastUsedCustomAccentColor=4,118,208
 TerminalApplication=kitty
 TerminalService=kitty.desktop
