@@ -11,7 +11,7 @@ REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 CHAOTIC_SCRIPT="$REPO_DIR/setup_chaotic.sh"
 APP_SCRIPT="$REPO_DIR/install_apps.sh"
 COPY_SCRIPT="$REPO_DIR/copy_dotfiles.sh"
-APPEARANCE_SCRIPT="$REPO_DIR/kde.sh"
+KDE_SCRIPT="$REPO_DIR/kde.sh"
 RESTORE_SCRIPT="$REPO_DIR/restore_backup.sh"
 
 # ==========================================================
@@ -170,7 +170,6 @@ esac
 MENU_ITEMS+=(
     "Applications"
     "Copy dotfiles"
-    "Themes & wallpaper"
     "KDE appearance"
     "Exit"
 )
@@ -199,7 +198,7 @@ CHOICE=$(
             ;;
 
         "KDE appearance")
-            run_script "$APPEARANCE_SCRIPT" "KDE appearance"
+            run_script "$KDE_SCRIPT" "KDE appearance"
             ;;
 
         "Restore backup")
@@ -274,12 +273,12 @@ echo
 
 CHOICE=$(
     gum choose \
-        "Reboot now" \
+        "ROBOOT NOW" \
         "Reboot later"
 )
 
 case "$CHOICE" in
-    "Reboot now")
+    "REBOOT NOW")
         sudo reboot
         ;;
     "Reboot later"|*)
