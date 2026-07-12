@@ -1,44 +1,63 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
-FAVORITES="$REPO_DIR/appearance/favorites.txt"
+FAVORITES_TXT="$SCRIPT_DIR/favorites.txt"
+STATS="$HOME/.config/kactivitymanagerd-statsrc"
+DB="$HOME/.local/share/kactivitymanagerd/resources/database"
 
-[[ -f "$FAVORITES" ]] || exit 1
+[[ -f "$FAVORITES_TXT" ]] || { echo "Missing $FAVORITES_TXT"; exit 1; }
+[[ -f "$STATS" ]] || { echo "Missing $STATS"; exit 1; }
+[[ -f "$DB" ]] || { echo "Missing $DB"; exit 1; }
 
-# Build JS array
-apps=""
+echo "Building favorites list..."
 
-while IFS= read -r app; do
-    [[ -z "$app" || "$app" =~ ^# ]] && continue
-    apps="$apps\"$app\","
-done < "$FAVORITES"
+mapfile -t FAVORITES < <(
+    sed '/^[[:space:]]*#/d;/^[[:space:]]*$/d' "$FAVORITES_TXT" |
+    sed 's#^applications:##' |
+    sed 's#^#applications:#'
+)
 
-apps="[${apps%,}]"
+ORDERING="$(IFS=,; echo "${FAVORITES[*]}")"
 
-qdbus org.kde.plasmashell \
-    /PlasmaShell \
-    org.kde.PlasmaShell.evaluateScript "
-var desktops = desktops();
+echo "Updating kactivitymanagerd-statsrc..."
 
-for (var i=0;i<desktops.length;i++) {
+grep '^\[Favorites-' "$STATS" |
+tr -d '[]' |
+while read -r GROUP; do
+    kwriteconfig6 \
+        --file "$STATS" \
+        --group "$GROUP" \
+        --key ordering \
+        "$ORDERING"
+done
 
-    var widgets = desktops[i].widgets();
+echo "Updating SQLite database..."
 
-    for (var j=0;j<widgets.length;j++) {
+{
+    echo "BEGIN;"
+    echo "DELETE FROM ResourceLink WHERE initiatingAgent='org.kde.plasma.favorites.applications';"
 
-        if (widgets[j].type == 'org.kde.plasma.icontasks') {
+    for APP in "${FAVORITES[@]}"; do
+        printf "INSERT INTO ResourceLink (usedActivity, initiatingAgent, targettedResource) VALUES(':global','org.kde.plasma.favorites.applications','%s');\n" "$APP"
+    done
 
-            widgets[j].currentConfigGroup = ['General'];
+    echo "COMMIT;"
+} | sqlite3 "$DB"
 
-            widgets[j].writeConfig(
-                'launchers',
-                $apps
-            );
-        }
-    }
-}
-"
+echo "Restarting KActivityManager..."
 
-echo "Launcher favorites applied."
+systemctl --user restart plasma-kactivitymanagerd.service 2>/dev/null || true
+
+sleep 1
+
+echo "Restarting Plasma..."
+
+kquitapp6 plasmashell 2>/dev/null || true
+
+sleep 1
+
+kstart6 plasmashell >/dev/null 2>&1 || plasmashell >/dev/null 2>&1 &
+
+echo "Done."
