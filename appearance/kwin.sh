@@ -7,7 +7,6 @@ cp -f "$REPO_DIR/.config/kwinrc" "$HOME/.config/" || true
 cp -f "$REPO_DIR/.config/kwinrulesrc" "$HOME/.config/" || true
 
 # KDE Store IDs for effects and scripts
-# Format: name:store_id
 KWIN_EFFECTS=(
     "bouncingPopups:2350410"
     "bouncingWindows:2350409"
@@ -19,14 +18,13 @@ KWIN_SCRIPTS=(
 
 install_kns() {
     local type="$1" id="$2" name="$3"
+    local tmpdir pkgfile dlurl
 
-    local tmpdir
     tmpdir="$(mktemp -d)"
-    local pkgfile="$tmpdir/package"
+    pkgfile="$tmpdir/package"
 
-    local dlurl
-    dlurl="$(curl -sL "https://api.opendesktop.org/v1/content/data/$id" \
-        | python3 -c "import sys,json; print(json.load(sys.stdin)['downloadurl'])" 2>/dev/null)" || true
+    dlurl=$(curl -sL "https://api.opendesktop.org/ocs/v1/content/data/$id?format=json" \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['data'][0]['downloadlink1'])" 2>/dev/null) || true
 
     if [[ -z "$dlurl" ]]; then
         echo "  Failed to get download URL for $name (ID: $id)"
@@ -34,6 +32,7 @@ install_kns() {
         return
     fi
 
+    echo "  Downloading $name..."
     curl -sL -o "$pkgfile" "$dlurl"
 
     if kpackagetool6 --type="KWin/$type" --list 2>/dev/null | grep -q "$name"; then
@@ -47,11 +46,17 @@ install_kns() {
     rm -rf "$tmpdir"
 }
 
+enable_kwin_component() {
+    local name="$1"
+    kwriteconfig6 --file "$HOME/.config/kwinrc" --group Plugins --key "${name}Enabled" "true"
+}
+
 echo "Installing KWin effects from KDE Store..."
 for entry in "${KWIN_EFFECTS[@]}"; do
     name="${entry%%:*}"
     id="${entry##*:}"
     install_kns "Effect" "$id" "$name"
+    enable_kwin_component "$name"
 done
 
 echo "Installing KWin scripts from KDE Store..."
@@ -59,6 +64,7 @@ for entry in "${KWIN_SCRIPTS[@]}"; do
     name="${entry%%:*}"
     id="${entry##*:}"
     install_kns "Script" "$id" "$name"
+    enable_kwin_component "$name"
 done
 
 echo "Reloading KWin..."
