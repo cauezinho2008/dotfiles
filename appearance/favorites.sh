@@ -45,19 +45,4 @@ echo "Updating SQLite database..."
 
     echo "COMMIT;"
 } | sqlite3 "$DB"
-
-echo "Restarting KActivityManager..."
-
-systemctl --user restart plasma-kactivitymanagerd.service 2>/dev/null || true
-
-sleep 1
-
-echo "Restarting Plasma..."
-
-kquitapp6 plasmashell 2>/dev/null || true
-
-sleep 1
-
-kstart6 plasmashell >/dev/null 2>&1 || plasmashell >/dev/null 2>&1 &
-
 echo "Done."

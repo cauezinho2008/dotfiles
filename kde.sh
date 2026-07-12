@@ -153,6 +153,39 @@ fi
 
 done < "$ORDER_FILE"
 
+# ==========================================================
+# Reload & Restart
+# ==========================================================
+
+echo
+gum style \
+    --foreground 33 \
+    --bold \
+    --align center \
+"Reloading services..."
+
+# Re-exec user daemon
+systemctl --user daemon-reexec 2>/dev/null || true
+
+# Reload KWin if running
+if command -v qdbus &>/dev/null && qdbus org.kde.KWin &>/dev/null 2>&1; then
+    qdbus org.kde.KWin /KWin org.kde.KWin.reloadConfig 2>/dev/null || true
+fi
+
+# Restart KGlobalAccel to pick up shortcuts
+kquitapp6 kglobalacceld 2>/dev/null || true
+sleep 0.5
+kglobalacceld 2>/dev/null || true
+
+# Restart KActivityManager for favorites
+systemctl --user restart plasma-kactivitymanagerd.service 2>/dev/null || true
+sleep 0.5
+
+# Restart plasmashell to pick up panel/applet changes
+kquitapp6 plasmashell 2>/dev/null || true
+sleep 1
+kstart6 plasmashell >/dev/null 2>&1 || plasmashell >/dev/null 2>&1 &
+
 echo
 gum style \
     --foreground 82 \

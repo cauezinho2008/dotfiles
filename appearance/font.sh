@@ -67,13 +67,4 @@ EOF
 fi
 
 echo "Applied GTK 4 font settings"
-
-# ── Reload KDE config ────────────────────────────────────────
-
-if command -v qdbus &>/dev/null && qdbus org.kde.KWin &>/dev/null 2>&1; then
-    qdbus org.kde.KWin /KWin org.kde.KWin.reloadConfig 2>/dev/null || true
-fi
-
-systemctl --user daemon-reexec 2>/dev/null || true
-
 echo "Font setup complete: $FONT_NAME @ ${FONT_SIZE}pt"

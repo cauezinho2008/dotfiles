@@ -67,5 +67,3 @@ for entry in "${KWIN_SCRIPTS[@]}"; do
     enable_kwin_component "$name"
 done
 
-echo "Reloading KWin..."
-qdbus org.kde.KWin /KWin org.kde.KWin.reloadConfig >/dev/null 2>&1 || true

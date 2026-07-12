@@ -48,11 +48,6 @@ mkdir -p "$HOME/.config/kdedefaults"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key cursorTheme "$CURSOR_NAME"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key cursorSize "$CURSOR_SIZE"
 
-# Live apply if Plasma is running
-if command -v qdbus &>/dev/null && qdbus org.kde.KWin &>/dev/null 2>&1; then
-    qdbus org.kde.KWin /KWin org.kde.KWin.reloadConfig 2>/dev/null || true
-fi
-
 # ── GTK 3 ────────────────────────────────────────────────────
 
 GTK3="$HOME/.config/gtk-3.0/settings.ini"
@@ -137,9 +132,4 @@ Inherits=$CURSOR_NAME
 EOF
     echo "Applied system-wide cursor default"
 fi
-
-# ── Re-exec user daemon ──────────────────────────────────────
-
-systemctl --user daemon-reexec 2>/dev/null || true
-
 echo "Cursor setup complete: $CURSOR_NAME @ ${CURSOR_SIZE}px"
