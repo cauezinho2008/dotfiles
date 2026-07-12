@@ -47,7 +47,7 @@ curl -fsSL https://raw.githubusercontent.com/cauezinho2008/dotfiles/main/setup.s
 
 This launches the interactive installer
 
-<img width="331" height="294" alt="image" src="https://github.com/user-attachments/assets/6645e758-c9a3-4dc2-ab68-5b02b6c5f5e3" />
+<img width="836" height="561" alt="image" src="https://github.com/user-attachments/assets/bfe7e5e1-7a42-4c8f-9de4-3c5675d2400b" />
 
 
 where you can:
