@@ -18,5 +18,5 @@ baloofilerc
 colorscheme
 gtk
 kdedefaults
-kactivitymanagerdr-statsrc
+kactivitymanagerd-statsrc
 kglobalshortcutsrc
