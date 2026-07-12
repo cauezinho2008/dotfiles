@@ -273,7 +273,7 @@ echo
 
 CHOICE=$(
     gum choose \
-        "ROBOOT NOW" \
+        "REBOOT NOW" \
         "Reboot later"
 )
 
