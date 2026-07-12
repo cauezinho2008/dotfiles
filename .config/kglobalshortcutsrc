@@ -315,6 +315,9 @@ _launch=Meta+S
 [services][kitty.desktop]
 _launch=Ctrl+Alt+T\tMeta+T
 
+[services][net.local.opencode.desktop]
+_launch=Meta+Shift+Search
+
 [services][org.kde.kcalc.desktop]
 _launch=Calculator\tMeta+C
 
