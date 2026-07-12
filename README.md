@@ -65,8 +65,7 @@ Everything is modular, so you can choose only what you want.
 
 it also features previews of currently selected item trought the [`/preview`](./preview) folder:
 
-<img width="740" height="413" alt="image" src="https://github.com/user-attachments/assets/745c3dbc-02be-4823-85ee-f073e4d68dba" />
-
+<img width="795" height="460" alt="Screenshot_20260712_094055" src="https://github.com/user-attachments/assets/8ef711fe-cc1b-40c2-9ae5-792561552088" />
 
 > [!NOTE]
 > Its recommended to reboot after installation,
