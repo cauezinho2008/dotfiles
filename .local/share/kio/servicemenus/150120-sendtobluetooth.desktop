@@ -1,0 +1,15 @@
+[Desktop Entry]
+X-SuSE-translate=true
+Type=Service
+Icon=yast-bluetooth
+MimeType=application/octet-stream;
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin,all/allfiles
+ExcludeServiceTypes=application/x-iso,kdedevice/*,inode/directory
+Actions=sendtoscan
+
+[Desktop Action sendtoscan]
+Exec=bluedevil-sendfile -f %U
+Icon=yast-bluetooth
+Name=Send via Bluetooth...
+
+

@@ -1,0 +1,37 @@
+[Desktop Entry]
+Actions=Install Arch packages;
+Icon=application-x-archive
+MimeType=all/all;
+ServiceTypes=KonqPopupMenu/Plugin
+Type=Service
+X-KDE-Priority=TopLevel
+X-KDE-StartupNotify=false
+
+[Desktop Action Install Arch packages]
+Exec=files=$(echo '%U' | sed "s@$PWD/@\../@g"); if [ `which pacman` ]; then konsole --hold -e bash -c "echo Install %N ?; sudo pacman -U $files"; else kdialog --msgbox "Arch Linux package format is not supported"; fi;
+Icon=application-x-archive
+Name[en]=Install Arch packages
+Name[zh_cn]=安装Arch包
+Name[de]=Arch-Pakete installieren
+Name[fr]=Installer les paquets Arch
+Name[es]=Instalar paquetes Arch
+Name[cs]=Instalace balíčků Arch
+Name[el]=Εγκατάσταση πακέτων Arch
+Name[pl]=Zainstaluj pakiety Arch
+Name[uk]=Встановити Arch-пакети
+Name[ro]=Instalarea pachetelor Arch
+Name[id]=Instal paket Arch
+Name[ja]=Archパッケージのインストール
+Name[ko]=Arch 패키지 설치
+Name[hu]=Arch csomagok telepítése
+Name[it]=Installare i pacchetti Arch
+Name[nl]=Arch-pakketten installeren
+Name[pt]=Instalar pacotes Arch
+Name[sv]=Installera Arch-paket
+Name[fi]=Asenna Arch-paketit
+Name[lv]=Instalēt Arch paketes
+Name[lt]=Įdiegti Arch paketus
+Name[tr]=Arch paketlerini yükleme
+Name[sk]=Inštalácia Arch balíkov
+Name[sl]=Namestitev paketov Arch
+Name[et]=Paigaldage Arch-paketid

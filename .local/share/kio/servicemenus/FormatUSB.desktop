@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/all;
+Actions=Format;
+X-KDE-StartupNotify=false
+
+[Desktop Action Format]
+Icon=usb-creator-kde
+Name=Format USB
+Name[it]=Partiziona USB
+Exec=bash -c 'mkdir -p ~/.local/share/solid/actions/ && [ ! -f /usr/bin/mintstick ] && notify-send -u critical "Please Install The (mintstick) Package First" && exit 1 ;[ ! -f ~/.local/share/solid/actions/Formatter.desktop ] &&  printf "[Desktop Action open]\nExec=mintstick -m format --usb /dev/\e$(basename \e"%%%%i\e" )\nIcon=usb-creator-kde\nName=Format USB\n[Desktop Entry]\nActions=open;\nType=Service\nX-KDE-Action-Custom=true\nX-KDE-Solid-Predicate=[ IS StorageVolume AND StorageVolume.ignored == false ]" > ~/.local/share/solid/actions/Formatter.desktop ;mintstick -m format '
