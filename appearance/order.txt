@@ -1,5 +1,6 @@
 font
 cursor
+search
 wallpaper
 lock_screen
 colorscheme

@@ -48,6 +48,16 @@ mkdir -p "$HOME/.config/kdedefaults"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key cursorTheme "$CURSOR_NAME"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key cursorSize "$CURSOR_SIZE"
 
+# ── Launch feedback ──────────────────────────────────────────
+
+kwriteconfig6 --file "$HOME/.config/klaunchrc" --group FeedbackStyle --key FeedbackEnabled "true"
+echo "Enabled launch feedback"
+
+# ── Disable shake cursor ─────────────────────────────────────
+
+kwriteconfig6 --file "$HOME/.config/kwinrc" --group Plugins --key shakecursorEnabled "false"
+echo "Disabled shake cursor accessibility feature"
+
 # ── GTK 3 ────────────────────────────────────────────────────
 
 GTK3="$HOME/.config/gtk-3.0/settings.ini"
