@@ -173,28 +173,39 @@ fi
 
 echo "Disabling mouse acceleration..."
 
-# Set Flat profile as default for future devices
+# Default for new devices
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAccelerationProfile "1"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAcceleration "0.000"
 
-# Apply to all existing Libinput mouse devices in kcminputrc
+# Apply to all existing Libinput device sections in kcminputrc
 KCM="$HOME/.config/kcminputrc"
 if [[ -f "$KCM" ]]; then
-    sed -i '/^\[Libinput/,/^\[/ s/^PointerAccelerationProfile=.*/PointerAccelerationProfile=1/' "$KCM"
-    sed -i '/^\[Libinput/,/^\[/ s/^PointerAcceleration=.*/PointerAcceleration=0.000/' "$KCM"
+    python3 - "$KCM" << 'PYEOF'
+import sys, configparser
+cfg = configparser.ConfigParser(strict=False)
+cfg.optionxform = str
+cfg.read(sys.argv[1])
+changed = False
+for section in cfg.sections():
+    if section.startswith("Libinput"):
+        if cfg.get(section, "PointerAccelerationProfile", fallback=None) != "1":
+            cfg.set(section, "PointerAccelerationProfile", "1")
+            changed = True
+        if cfg.get(section, "PointerAcceleration", fallback=None) != "0.000":
+            cfg.set(section, "PointerAcceleration", "0.000")
+            changed = True
+if changed:
+    with open(sys.argv[1], "w") as f:
+        cfg.write(f)
+PYEOF
 fi
 
 # gsettings for GNOME/GTK stack
 command -v gsettings &>/dev/null && \
     gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'flat' 2>/dev/null || true
 
-# xinput for running XWayland
-if command -v xinput &>/dev/null; then
-    for dev in $(xinput list --id-only 2>/dev/null); do
-        xinput --set-prop "$dev" "libinput Accel Profile Enabled" 0, 1 2>/dev/null || true
-        xinput --set-prop "$dev" "libinput Accel Speed" 0 2>/dev/null || true
-    done
-fi
+# kwin D-Bus for live reload (Wayland)
+qdbus org.kde.KWin /KWin org.kde.KWin.reloadConfig 2>/dev/null || true
 
 echo "Disabled mouse acceleration"
 

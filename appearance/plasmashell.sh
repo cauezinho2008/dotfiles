@@ -4,8 +4,9 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 for file in plasmashellrc plasmarc; do
-    [[ -f "$REPO_DIR/.config/$file" ]] &&
-        cp -f "$REPO_DIR/.config/$file" "$HOME/.config/"
+    if [[ -f "$REPO_DIR/.config/$file" ]]; then
+        sed "s|\$HOME|$HOME|g" "$REPO_DIR/.config/$file" > "$HOME/.config/$file"
+    fi
 done
 
 APPLETS="$REPO_DIR/.config/plasma-org.kde.plasma.desktop-appletsrc"
