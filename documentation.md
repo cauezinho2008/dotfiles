@@ -40,8 +40,8 @@ All linked automatically.
 * [Project Structure](#project-structure)
 * [Main Execution Flow](#main-execution-flow)
 * [setup.sh](#setupsh)
-* [main.sh](#main.sh)
-* [setup_chaotic.sh](#chaoticsh)
+* [main.sh](#mainsh)
+* [setup_chaotic.sh](#setup_chaoticsh)
 * [install_apps.sh](#install_appssh)
 * [copy_dotfiles.sh](#copy_dotfilessh)
 * [excluded.txt](#excludedtxt)
@@ -244,7 +244,6 @@ Uses gum to launch:
 * [install_apps.sh](#install_appssh)
 * [copy_dotfiles.sh](#copy_dotfilessh)
 * [appearance.sh](#appearancesh)
-* [Restore_backup.sh](#Restore_backup.sh)
 <img width="331" height="294" alt="image" src="https://github.com/user-attachments/assets/6645e758-c9a3-4dc2-ab68-5b02b6c5f5e3" />
 
 ---
@@ -683,8 +682,8 @@ Shared preview engine.
 
 Used by:
 
-* [copy_dotfiles.sh](#copy_dotfiles.sh)
-* [appearance.sh](#appearance.sh)
+* [copy_dotfiles.sh](#copy_dotfilessh)
+* [appearance.sh](#appearancesh)
 
 Runs inside fzf preview subshell.
 
