@@ -18,15 +18,8 @@ FONT_NAME="ProFont IIx Nerd Font Mono"
 FONT_SIZE=10
 FONT_VALUES="$FONT_NAME,$FONT_SIZE,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0"
 
-# ── Wallpaper ────────────────────────────────────────────────
-
-sudo mkdir -p "$WALLPAPER_DIR"
-sudo cp -f "$WALLPAPER_SRC" "$WALLPAPER_DIR/"
-echo "Wallpaper copied to $WALLPAPER_DIR/$WALLPAPER_NAME"
-
-# ── Config ───────────────────────────────────────────────────
-
-sudo tee "$PLASMALOGIN_CONF" > /dev/null << EOF
+TMPFILE="$(mktemp)"
+cat > "$TMPFILE" << EOF
 [Autologin]
 Session=plasma
 
@@ -38,5 +31,21 @@ Blur=true
 FillMode=0
 Image=file://$WALLPAPER_DIR/$WALLPAPER_NAME
 EOF
+
+if command -v pkexec &>/dev/null; then
+    pkexec sh -c "mkdir -p $WALLPAPER_DIR && cp -f $WALLPAPER_SRC $WALLPAPER_DIR/ && cp -f $TMPFILE $PLASMALOGIN_CONF"
+elif sudo -n true 2>/dev/null; then
+    sudo sh -c "mkdir -p $WALLPAPER_DIR && cp -f $WALLPAPER_SRC $WALLPAPER_DIR/ && cp -f $TMPFILE $PLASMALOGIN_CONF"
+else
+    echo
+    echo "Need administrator privileges to configure the login screen."
+    echo "Enter your password when prompted."
+    echo
+    sudo sh -c "mkdir -p $WALLPAPER_DIR && cp -f $WALLPAPER_SRC $WALLPAPER_DIR/ && cp -f $TMPFILE $PLASMALOGIN_CONF"
+fi
+
+rm -f "$TMPFILE"
+
+echo "Wallpaper copied to $WALLPAPER_DIR/$WALLPAPER_NAME"
 
 echo "Plasma login manager settings applied"
