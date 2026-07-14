@@ -20,3 +20,6 @@ gtk
 kdedefaults
 kactivitymanagerd-statsrc
 kglobalshortcutsrc
+krunnerrc
+kio
+kxmlgui5
