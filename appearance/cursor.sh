@@ -94,12 +94,18 @@ fi
 
 echo "Applied GTK 4 cursor settings"
 
-# ── Xresources (X11) ────────────────────────────────────────
+# ── GSettings (GNOME/GTK override for apps that ignore settings.ini) ──
+if command -v gsettings &>/dev/null; then
+    gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR_NAME" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface cursor-size "$CURSOR_SIZE" 2>/dev/null || true
+    echo "Applied GSettings cursor settings"
+fi
+
+# ── Xresources (X11 / XWayland) ─────────────────────────────
 
 XR="$HOME/.Xresources"
 mkdir -p "$(dirname "$XR")"
 
-# Remove old Xcursor lines, then append
 if [[ -f "$XR" ]]; then
     sed -i '/^Xcursor\.theme:/d; /^Xcursor\.size:/d' "$XR"
 fi
@@ -108,12 +114,33 @@ Xcursor.theme: $CURSOR_NAME
 Xcursor.size: $CURSOR_SIZE
 EOF
 
-command -v xrdb &>/dev/null && xrdb -merge "$XR"
+# Merge into XWayland if running; also write a script for autostart
+if command -v xrdb &>/dev/null; then
+    if xrdb -merge "$XR" 2>/dev/null; then
+        echo "  Merged into running XWayland"
+    else
+        echo "  XWayland not ready yet, will load on next login"
+    fi
+fi
+
+# Autostart helper to reload on XWayland start
+mkdir -p "$HOME/.config/autostart"
+cat > "$HOME/.config/autostart/xresources-load.desktop" << EOF
+[Desktop Entry]
+Type=Application
+Name=Load Xresources
+Exec=sh -c "xrdb -merge $XR"
+X-KDE-autostart-phase=2
+NoDisplay=true
+EOF
 
 echo "Applied X11 cursor settings"
 
-# ── Wayland environment.d ────────────────────────────────────
+# ── Environment vars for current session ─────────────────────
+export XCURSOR_THEME="$CURSOR_NAME"
+export XCURSOR_SIZE="$CURSOR_SIZE"
 
+# ── Wayland environment.d (persists on next login) ───────────
 mkdir -p "$XDG_ENV_DIR"
 cat > "$XDG_ENV_DIR/cursor.conf" << EOF
 XCURSOR_THEME=$CURSOR_NAME
