@@ -12,5 +12,10 @@ REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 [[ -d "$REPO_DIR/.local/share/kio/servicemenus" ]] &&
     cp -a "$REPO_DIR/.local/share/kio/servicemenus" "$HOME/.local/share/kio/"
 
-# restart dolphin if open
+[[ -d "$REPO_DIR/.local/share/kxmlgui5/dolphin" ]] &&
+    cp -a "$REPO_DIR/.local/share/kxmlgui5/dolphin" "$HOME/.local/share/kxmlgui5/"
+
+[[ -f "$REPO_DIR/.local/state/dolphinstaterc" ]] &&
+    cp -a "$REPO_DIR/.local/state/dolphinstaterc" "$HOME/.local/state/"
+
 pkill dolphin 2>/dev/null || true
