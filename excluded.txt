@@ -1,5 +1,4 @@
 dolphinrc
-dolphin
 kdeglobals
 plasmarc
 plasmashellrc
@@ -16,7 +15,6 @@ gtkrc
 color-schemes
 baloofilerc
 colorscheme
-gtk
 kdedefaults
 kactivitymanagerd-statsrc
 kglobalshortcutsrc
