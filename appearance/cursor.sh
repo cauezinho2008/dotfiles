@@ -169,4 +169,33 @@ Inherits=$CURSOR_NAME
 EOF
     echo "Applied system-wide cursor default"
 fi
+# ── Disable mouse acceleration ──────────────────────────────
+
+echo "Disabling mouse acceleration..."
+
+# Set Flat profile as default for future devices
+kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAccelerationProfile "1"
+kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAcceleration "0.000"
+
+# Apply to all existing Libinput mouse devices in kcminputrc
+KCM="$HOME/.config/kcminputrc"
+if [[ -f "$KCM" ]]; then
+    sed -i '/^\[Libinput/,/^\[/ s/^PointerAccelerationProfile=.*/PointerAccelerationProfile=1/' "$KCM"
+    sed -i '/^\[Libinput/,/^\[/ s/^PointerAcceleration=.*/PointerAcceleration=0.000/' "$KCM"
+fi
+
+# gsettings for GNOME/GTK stack
+command -v gsettings &>/dev/null && \
+    gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'flat' 2>/dev/null || true
+
+# xinput for running XWayland
+if command -v xinput &>/dev/null; then
+    for dev in $(xinput list --id-only 2>/dev/null); do
+        xinput --set-prop "$dev" "libinput Accel Profile Enabled" 0, 1 2>/dev/null || true
+        xinput --set-prop "$dev" "libinput Accel Speed" 0 2>/dev/null || true
+    done
+fi
+
+echo "Disabled mouse acceleration"
+
 echo "Cursor setup complete: $CURSOR_NAME @ ${CURSOR_SIZE}px"
