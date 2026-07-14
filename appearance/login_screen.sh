@@ -32,17 +32,31 @@ FillMode=0
 Image=file://$WALLPAPER_DIR/$WALLPAPER_NAME
 EOF
 
-if command -v pkexec &>/dev/null; then
-    pkexec sh -c "mkdir -p $WALLPAPER_DIR && cp -f $WALLPAPER_SRC $WALLPAPER_DIR/ && cp -f $TMPFILE $PLASMALOGIN_CONF"
-elif sudo -n true 2>/dev/null; then
-    sudo sh -c "mkdir -p $WALLPAPER_DIR && cp -f $WALLPAPER_SRC $WALLPAPER_DIR/ && cp -f $TMPFILE $PLASMALOGIN_CONF"
-else
-    echo
-    echo "Need administrator privileges to configure the login screen."
-    echo "Enter your password when prompted."
-    echo
-    sudo sh -c "mkdir -p $WALLPAPER_DIR && cp -f $WALLPAPER_SRC $WALLPAPER_DIR/ && cp -f $TMPFILE $PLASMALOGIN_CONF"
-fi
+run_priv() {
+    local cmd="$1"
+
+    if command -v pkexec &>/dev/null; then
+        pkexec sh -c "$cmd" && return 0
+    fi
+
+    if sudo -n true 2>/dev/null; then
+        sudo sh -c "$cmd" && return 0
+    fi
+
+    for i in $(seq 30); do
+        if yes | sudo -S sh -c "$cmd" 2>/dev/null; then
+            return 0
+        fi
+        sleep 2
+    done
+
+    echo "Failed to get administrator privileges for login screen config."
+    echo "Try running: sudo $0"
+    return 1
+}
+
+CMD="mkdir -p $WALLPAPER_DIR && cp -f $WALLPAPER_SRC $WALLPAPER_DIR/ && cp -f $TMPFILE $PLASMALOGIN_CONF"
+run_priv "$CMD"
 
 rm -f "$TMPFILE"
 
