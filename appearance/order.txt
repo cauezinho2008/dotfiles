@@ -4,6 +4,7 @@ search
 wallpaper
 lock_screen
 colorscheme
+login_screen
 kwin
 plasmashell
 favorites
