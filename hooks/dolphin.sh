@@ -18,4 +18,7 @@ REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 [[ -f "$REPO_DIR/.local/state/dolphinstaterc" ]] &&
     cp -a "$REPO_DIR/.local/state/dolphinstaterc" "$HOME/.local/state/"
 
+[[ -f "$REPO_DIR/.local/share/user-places.xbel" ]] &&
+    sed "s|\$HOME|$HOME|g" "$REPO_DIR/.local/share/user-places.xbel" > "$HOME/.local/share/user-places.xbel"
+
 pkill dolphin 2>/dev/null || true
