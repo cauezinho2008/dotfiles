@@ -30,9 +30,9 @@ dst = configparser.ConfigParser(strict=False)
 dst.optionxform = str
 dst.read(dst_file)
 
-# Remove stale color sections
+# Remove stale color sections (preserve non-color keys in WM and KDE)
 for section in list(dst.sections()):
-    if section.startswith("Colors:") or section.startswith("ColorEffects:") or section == "WM" or section == "KDE":
+    if section.startswith("Colors:") or section.startswith("ColorEffects:"):
         dst.remove_section(section)
 
 # Write color sections from source (skip General, we handle it separately)
