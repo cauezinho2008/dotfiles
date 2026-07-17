@@ -1,3 +1,5 @@
+MenuBar=Disabled
+
 [ContextMenu]
 ShowAddToPlaces=false
 ShowCopyToOtherSplitView=false
