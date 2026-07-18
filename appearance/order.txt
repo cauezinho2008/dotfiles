@@ -9,3 +9,4 @@ kwin
 plasmashell
 favorites
 shortcuts
+dolphin
