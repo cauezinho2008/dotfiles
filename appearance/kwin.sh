@@ -56,6 +56,12 @@ enable_kwin_component() {
 kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key BorderSize Normal
 kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ShowToolTips false
 
+kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAllKey Meta
+kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAll1 Move
+kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAll2 "Operations menu"
+kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAll3 Resize
+kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAllWheel "Maximize/Restore"
+
 kwriteconfig6 --file breezerc --group Windeco --key ButtonSize 2
 kwriteconfig6 --file breezerc --group Windeco --key DrawBackgroundGradient true
 kwriteconfig6 --file breezerc --group Windeco --key DrawHighlight true
