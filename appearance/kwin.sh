@@ -61,8 +61,12 @@ kwriteconfig6 --file breezerc --group Windeco --key DrawBackgroundGradient true
 kwriteconfig6 --file breezerc --group Windeco --key DrawHighlight true
 kwriteconfig6 --file breezerc --group Windeco --key DrawInnerBorder true
 kwriteconfig6 --file breezerc --group Windeco --key DrawOuterBorder false
-kwriteconfig6 --file breezerc --group Windeco --key ShadowSize 3
-kwriteconfig6 --file breezerc --group Windeco --key TitleAlignment Center
+kwriteconfig6 --file breezerc --group Windeco --key ShadowSize ShadowSmall
+kwriteconfig6 --file breezerc --group Windeco --key TitleAlignment AlignCenterFullWidth
+kwriteconfig6 --file breezerc --group Common --key OutlineCloseButton true
+kwriteconfig6 --file breezerc --group Windeco --key DrawBorderOnMaximizedWindows false
+kwriteconfig6 --file breezerc --group Windeco --key roundedCorners true
+kwriteconfig6 --file breezerc --group Windeco --key ShadowStrength 255
 
 echo "Installing KWin effects from KDE Store..."
 for entry in "${KWIN_EFFECTS[@]}"; do
