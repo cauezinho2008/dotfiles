@@ -68,3 +68,27 @@ if command -v plasma-apply-colorscheme &>/dev/null; then
 fi
 
 echo "Color scheme applied."
+
+# --- GTK config ---
+
+mkdir -p "$HOME/.config"
+
+[[ -d "$REPO_DIR/.config/gtk-3.0" ]] &&
+    cp -a "$REPO_DIR/.config/gtk-3.0" "$HOME/.config/"
+
+[[ -d "$REPO_DIR/.config/gtk-4.0" ]] &&
+    cp -a "$REPO_DIR/.config/gtk-4.0" "$HOME/.config/"
+
+[[ -f "$REPO_DIR/.config/gtkrc" ]] &&
+    cp -a "$REPO_DIR/.config/gtkrc" "$HOME/.config/"
+
+gsettings set org.gnome.desktop.interface gtk-theme "Breeze" 2>/dev/null || true
+
+# --- Application style ---
+
+mkdir -p "$HOME/.config"
+[[ -f "$REPO_DIR/.config/breezerc" ]] &&
+    cp -a "$REPO_DIR/.config/breezerc" "$HOME/.config/"
+
+kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAllKey Alt
+kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAll1 Move

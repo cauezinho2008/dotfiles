@@ -26,6 +26,8 @@ Color=0,0,255
 BorderActivate=9
 
 [MouseBindings]
+CommandAllKey=Alt
+CommandAll1=Move
 CommandAll2=Operations menu
 CommandAllWheel=Maximize/Restore
 
