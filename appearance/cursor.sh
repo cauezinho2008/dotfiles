@@ -51,7 +51,9 @@ kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key 
 # ── Launch feedback ──────────────────────────────────────────
 
 kwriteconfig6 --file "$HOME/.config/klaunchrc" --group FeedbackStyle --key FeedbackEnabled "true"
-echo "Enabled launch feedback"
+kwriteconfig6 --file "$HOME/.config/klaunchrc" --group FeedbackStyle --key BusyCursor "Bouncing"
+kwriteconfig6 --file "$HOME/.config/klaunchrc" --group FeedbackStyle --key BusyCursorTimeout "10"
+echo "Enabled launch feedback (bouncing, 10s)"
 
 # ── Disable shake cursor ─────────────────────────────────────
 
@@ -173,7 +175,11 @@ fi
 
 echo "Disabling mouse acceleration..."
 
-# Default for new devices
+# Write to actual kcminputrc (not just kdedefaults)
+kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAccelerationProfile "1"
+kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAcceleration "0.000"
+
+# Also write to kdedefaults for first-time setup
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAccelerationProfile "1"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAcceleration "0.000"
 
