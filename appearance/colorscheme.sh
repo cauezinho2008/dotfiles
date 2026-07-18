@@ -90,5 +90,17 @@ mkdir -p "$HOME/.config"
 [[ -f "$REPO_DIR/.config/breezerc" ]] &&
     cp -a "$REPO_DIR/.config/breezerc" "$HOME/.config/"
 
+kwriteconfig6 --file breezerc --group Common --key MenuOpacity 40
+kwriteconfig6 --file breezerc --group Common --key OutlineCloseButton true
+kwriteconfig6 --file breezerc --group Style --key ToolBarDrawItemSeparator true
+kwriteconfig6 --file breezerc --group Style --key TabBarDrawCenteredTabs false
+kwriteconfig6 --file breezerc --group Style --key ViewDrawFocusIndicator true
+kwriteconfig6 --file breezerc --group Style --key SliderTickmarks false
+kwriteconfig6 --file breezerc --group Style --key ExtendedResizeHandles true
+kwriteconfig6 --file breezerc --group Style --key WindowDragMode WD_FULL
+kwriteconfig6 --file breezerc --group Style --key DockWidgetDrawFrame false
+kwriteconfig6 --file breezerc --group Style --key SidePanelDrawFrame false
+kwriteconfig6 --file breezerc --group Style --key MenuItemDrawStrongFocus false
+
 kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAllKey Alt
 kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAll1 Move

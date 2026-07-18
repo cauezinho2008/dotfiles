@@ -1,2 +1,14 @@
 [Common]
-MenuOpacity=85
+MenuOpacity=40
+OutlineCloseButton=true
+
+[Style]
+ToolBarDrawItemSeparator=true
+TabBarDrawCenteredTabs=false
+ViewDrawFocusIndicator=true
+SliderTickmarks=false
+ExtendedResizeHandles=true
+WindowDragMode=WD_FULL
+DockWidgetDrawFrame=false
+SidePanelDrawFrame=false
+MenuItemDrawStrongFocus=false
