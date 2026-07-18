@@ -51,6 +51,19 @@ enable_kwin_component() {
     kwriteconfig6 --file "$HOME/.config/kwinrc" --group Plugins --key "${name}Enabled" "true"
 }
 
+# --- Window decoration settings ---
+
+kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key BorderSize Normal
+kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ShowToolTips false
+
+kwriteconfig6 --file breezerc --group Windeco --key ButtonSize 2
+kwriteconfig6 --file breezerc --group Windeco --key DrawBackgroundGradient true
+kwriteconfig6 --file breezerc --group Windeco --key DrawHighlight true
+kwriteconfig6 --file breezerc --group Windeco --key DrawInnerBorder true
+kwriteconfig6 --file breezerc --group Windeco --key DrawOuterBorder false
+kwriteconfig6 --file breezerc --group Windeco --key ShadowSize 3
+kwriteconfig6 --file breezerc --group Windeco --key TitleAlignment Center
+
 echo "Installing KWin effects from KDE Store..."
 for entry in "${KWIN_EFFECTS[@]}"; do
     name="${entry%%:*}"
