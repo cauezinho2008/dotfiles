@@ -21,4 +21,6 @@ REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 [[ -f "$REPO_DIR/.local/share/user-places.xbel" ]] &&
     sed "s|\$HOME|$HOME|g" "$REPO_DIR/.local/share/user-places.xbel" > "$HOME/.local/share/user-places.xbel"
 
+rm -f "$HOME/.cache/kxmlgui5/dolphin"* "$HOME/.cache/kxmlgui6/dolphin"*
+
 pkill dolphin 2>/dev/null || true
