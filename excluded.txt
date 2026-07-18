@@ -21,3 +21,4 @@ kglobalshortcutsrc
 krunnerrc
 kio
 kxmlgui5
+user-places.xbel
