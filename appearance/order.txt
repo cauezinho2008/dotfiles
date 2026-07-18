@@ -1,12 +1,12 @@
 font
 cursor
 search
-wallpaper
 lock_screen
 colorscheme
 login_screen
 kwin
 plasmashell
+wallpaper
 favorites
 shortcuts
 dolphin
