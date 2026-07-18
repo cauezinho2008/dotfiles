@@ -170,9 +170,14 @@ esac
 MENU_ITEMS+=(
     "Applications"
     "Copy dotfiles"
-    "KDE appearance"
-    "Exit"
 )
+
+# Show only on KDE Plasma
+if [[ "${XDG_CURRENT_DESKTOP,,}" == *kde* ]] || [[ "${DESKTOP_SESSION,,}" == *plasma* ]] || pgrep -x plasmashell &>/dev/null; then
+    MENU_ITEMS+=("KDE appearance")
+fi
+
+MENU_ITEMS+=("Exit")
 
 CHOICE=$(
     printf "%s\n" "${MENU_ITEMS[@]}" |
