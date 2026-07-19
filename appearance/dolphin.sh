@@ -36,10 +36,26 @@ mkdir -p "$(dirname "$PLACES_FILE")"
 
 sed "s|\$HOME|$HOME|g" "$REPO_DIR/.local/share/user-places.xbel" > "$PLACES_FILE"
 
-# Ensure Recent and Network stay off in all relevant config files
-kwriteconfig6 --file kdeglobals --group "KFileDialog Settings" --key ShowRecentFiles false
+# Keep Places Remote (Network) section hidden
 kwriteconfig6 --file kdeglobals --group "KFileDialog Settings" --key ShowRemote false
-kwriteconfig6 --file kdeglobals --group "KFileDialog Settings" --key ShowSpeedbar true
+
+# Remove ShowRecentFiles key from kdeglobals (was interfering with xbel's withRecentlyUsed)
+KCM="$HOME/.config/kdeglobals"
+if [[ -f "$KCM" ]]; then
+    python3 - "$KCM" << 'PYEOF'
+import sys, configparser
+cfg = configparser.ConfigParser(strict=False)
+cfg.optionxform = str
+cfg.read(sys.argv[1])
+changed = False
+if cfg.has_section("KFileDialog Settings"):
+    if cfg.remove_option("KFileDialog Settings", "ShowRecentFiles"):
+        changed = True
+if changed:
+    with open(sys.argv[1], "w") as f:
+        cfg.write(f)
+PYEOF
+fi
 
 # ── Clear toolbar cache & restart ──────────────────────────
 
