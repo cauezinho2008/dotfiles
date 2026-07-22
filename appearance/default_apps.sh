@@ -8,12 +8,11 @@ xdg-mime default org.kde.kwrite.desktop text/markdown
 xdg-mime default org.kde.kwrite.desktop application/json
 xdg-mime default org.kde.kwrite.desktop application/x-yaml
 
-xdg-mime default zen.desktop text/html
-xdg-mime default zen.desktop application/xhtml+xml
-xdg-mime default zen.desktop x-scheme-handler/chrome
-
+xdg-mime default helium.desktop text/html
+xdg-mime default helium.desktop application/xhtml+xml
 xdg-mime default helium.desktop x-scheme-handler/http
 xdg-mime default helium.desktop x-scheme-handler/https
+xdg-mime default helium.desktop x-scheme-handler/chrome
 xdg-mime default helium.desktop application/pdf
 
 xdg-mime default org.kde.gwenview.desktop image/png
