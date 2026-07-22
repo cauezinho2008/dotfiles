@@ -181,6 +181,9 @@ kglobalacceld 2>/dev/null || true
 systemctl --user restart plasma-kactivitymanagerd.service 2>/dev/null || true
 sleep 0.5
 
+# Disable splash screen
+kwriteconfig6 --file ksplashrc --group KSplash --key Engine none
+
 # Restart plasmashell to pick up panel/applet changes
 kquitapp6 plasmashell 2>/dev/null || true
 sleep 1
