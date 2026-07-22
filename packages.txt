@@ -16,3 +16,4 @@ git
 helium-browser-bin
 chafa
 openrgb
+opencode
