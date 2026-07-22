@@ -1,5 +1,6 @@
 [Common]
 MenuOpacity=40
+OutlineCloseButton=true
 
 [Style]
 DockWidgetDrawFrame=false
