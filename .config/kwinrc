@@ -1,4 +1,4 @@
-[Compositing]
+ [Compositing]
 AllowTearing=false
 
 [Desktops]
@@ -18,9 +18,6 @@ ScaleOutFactor=0.9
 
 [Effect-hidecursor]
 InactivityDuration=15
-
-[Effect-mousemark]
-Color=0,0,255
 
 [Effect-overview]
 BorderActivate=9
