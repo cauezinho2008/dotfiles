@@ -24,3 +24,4 @@ kxmlgui5
 user-places.xbel
 breezerc
 dolphin
+ardour9
