@@ -9,4 +9,5 @@ plasmashell
 wallpaper
 favorites
 shortcuts
+default_apps
 dolphin
