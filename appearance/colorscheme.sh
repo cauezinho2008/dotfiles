@@ -102,5 +102,3 @@ kwriteconfig6 --file breezerc --group Style --key DockWidgetDrawFrame false
 kwriteconfig6 --file breezerc --group Style --key SidePanelDrawFrame false
 kwriteconfig6 --file breezerc --group Style --key MenuItemDrawStrongFocus false
 
-kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAllKey Alt
-kwriteconfig6 --file kwinrc --group MouseBindings --key CommandAll1 Move

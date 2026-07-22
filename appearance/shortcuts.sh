@@ -10,4 +10,8 @@ cp -f "$REPO_DIR/.config/kglobalshortcutsrc" \
 
 # Unassign Meta+T from Plasma tiling to avoid conflict with kitty
 kwriteconfig6 --file kglobalshortcutsrc --group kwin --key "Edit Tiles" "none,none,Toggle Tiles Editor"
+# Reload shortcuts daemon to apply
+kquitapp6 kglobalacceld 2>/dev/null || true
+sleep 0.5
+kglobalacceld 2>/dev/null || true
 
