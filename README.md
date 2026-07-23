@@ -1,7 +1,3 @@
-> [!WARNING]
-> This project is still under development.
-> Not everything is fully implemented yet, and some scripts may change, break, or be incomplete.
-
 
 # Cauê's Dotfiles
 
