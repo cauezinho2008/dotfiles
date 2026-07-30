@@ -17,6 +17,7 @@ BrowseThroughArchives=true
 CloseSplitViewChoice=RightView
 ConfirmClosingMultipleTabs=false
 ConfirmClosingTerminalRunningProgram=false
+DoubleClickViewAction=none
 HideXTrashFile=true
 RememberOpenedTabs=false
 ShowFullPathInTitlebar=true
@@ -40,6 +41,3 @@ warnAboutRisksBeforeActingAsAdmin=false
 
 [PreviewSettings]
 Plugins=ffmpegthumbnailer,appimagethumbnail,audiothumbnail,glycin-heif,blenderthumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,glycin-image-rs,jpegthumbnail,glycin-jxl,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,gsf-office,mltpreview,mobithumbnail,opendocumentthumbnail,gsthumbnail,rawthumbnail,glycin-svg,svgthumbnail,ffmpegthumbs,exe-thumbnailer
-
-[VersionControl]
-enabledPlugins=Git

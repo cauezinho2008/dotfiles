@@ -97,6 +97,7 @@
    <Action name="bookmarks"/>
    <Action name="closed_tabs"/>
   </Menu>
+  <Separator weakSeparator="1"/>
   <Menu alreadyVisited="1" name="tools" noMerge="1">
    <text translationDomain="kxmlgui6">&amp;Tools</text>
    <Action name="open_preferred_search_tool"/>
@@ -120,7 +121,7 @@
    <Action name="options_configure"/>
   </Menu>
   <Separator weakSeparator="1"/>
-  <Menu name="help" noMerge="1">
+  <Menu alreadyVisited="1" name="help" noMerge="1">
    <text translationDomain="kxmlgui6">&amp;Help</text>
    <Action name="help_contents"/>
    <Action name="help_whats_this"/>
@@ -138,11 +139,11 @@
   <Action name="go_back"/>
   <Action name="view_redisplay"/>
   <Action name="new_menu"/>
-  <Action name="act_as_admin"/>
+  <Action name="toggle_search"/>
   <text context="@title:menu" translationDomain="dolphin">Main Toolbar</text>
   <Action name="url_navigators"/>
+  <Action name="copy_location"/>
   <Action name="split_view"/>
-  <Action name="toggle_search"/>
   <Action name="hamburger_menu"/>
  </ToolBar>
  <State name="new_file">
@@ -192,5 +193,6 @@
   <Action name="view_redisplay" priority="0"/>
   <Action iconText="New" name="new_menu" priority="0"/>
   <Action name="act_as_admin" priority="0"/>
+  <Action name="copy_location" priority="0"/>
  </ActionProperties>
 </gui>
