@@ -175,9 +175,9 @@ fi
 
 echo "Disabling mouse acceleration..."
 
-# Write to actual kcminputrc (not just kdedefaults)
-kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAccelerationProfile "1"
-kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAcceleration "0.000"
+# Write to actual kcminputrc (not just kdedefaults) with notify
+kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAccelerationProfile "1" --notify
+kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAcceleration "0.000" --notify
 
 # Also write to kdedefaults for first-time setup
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAccelerationProfile "1"
@@ -210,8 +210,44 @@ fi
 command -v gsettings &>/dev/null && \
     gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'flat' 2>/dev/null || true
 
-# kwin D-Bus for live reload (Wayland)
-qdbus org.kde.KWin /KWin org.kde.KWin.reloadConfig 2>/dev/null || true
+# Apply flat acceleration to all pointer devices via KWin D-Bus (Wayland)
+# Skips touchpads — they keep adaptive acceleration
+if command -v qdbus6 &>/dev/null; then
+    for dev in $(qdbus6 org.kde.KWin 2>/dev/null | grep '/InputDevice/event'); do
+        pointer=$(gdbus call --session --dest org.kde.KWin --object-path "$dev" \
+            --method org.freedesktop.DBus.Properties.Get \
+            org.kde.KWin.InputDevice pointer 2>/dev/null)
+        touchpad=$(gdbus call --session --dest org.kde.KWin --object-path "$dev" \
+            --method org.freedesktop.DBus.Properties.Get \
+            org.kde.KWin.InputDevice touchpad 2>/dev/null)
+        if [[ "$pointer" == "(<true>,")" && "$touchpad" != "(<true>,")" ]]; then
+            gdbus call --session --dest org.kde.KWin --object-path "$dev" \
+                --method org.freedesktop.DBus.Properties.Set \
+                org.kde.KWin.InputDevice pointerAccelerationProfileFlat "<true>" 2>/dev/null || true
+            gdbus call --session --dest org.kde.KWin --object-path "$dev" \
+                --method org.freedesktop.DBus.Properties.Set \
+                org.kde.KWin.InputDevice pointerAccelerationProfileAdaptive "<false>" 2>/dev/null || true
+            gdbus call --session --dest org.kde.KWin --object-path "$dev" \
+                --method org.freedesktop.DBus.Properties.Set \
+                org.kde.KWin.InputDevice pointerAcceleration "<0.0>" 2>/dev/null || true
+        fi
+    done
+fi
+
+# ── Enable natural scrolling for touchpads ──────────────────────
+echo "Enabling natural scrolling for touchpads..."
+if command -v qdbus6 &>/dev/null; then
+    for dev in $(qdbus6 org.kde.KWin 2>/dev/null | grep '/InputDevice/event'); do
+        touchpad=$(gdbus call --session --dest org.kde.KWin --object-path "$dev" \
+            --method org.freedesktop.DBus.Properties.Get \
+            org.kde.KWin.InputDevice touchpad 2>/dev/null)
+        if [[ "$touchpad" == "(<true>,")" ]]; then
+            gdbus call --session --dest org.kde.KWin --object-path "$dev" \
+                --method org.freedesktop.DBus.Properties.Set \
+                org.kde.KWin.InputDevice naturalScroll "<true>" 2>/dev/null || true
+        fi
+    done
+fi
 
 echo "Disabled mouse acceleration"
 
