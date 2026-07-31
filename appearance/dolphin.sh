@@ -19,6 +19,9 @@ HOME_DIR="$HOME"
 [[ -d "$REPO_DIR/.local/share/kio/servicemenus" ]] &&
     cp -a "$REPO_DIR/.local/share/kio/servicemenus" "$HOME/.local/share/kio/"
 
+# Remove git servicemenus (git entries unwanted in context menu)
+rm -f "$HOME/.local/share/kio/servicemenus/"*git*.desktop 2>/dev/null || true
+
 # ── kxmlgui (toolbar) ──────────────────────────────────────
 
 [[ -d "$REPO_DIR/.local/share/kxmlgui5/dolphin" ]] &&
