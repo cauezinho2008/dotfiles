@@ -164,11 +164,11 @@ MENU_ITEMS=()
 case "$DISTRO_ID" in
     arch|cachyos|endeavouros|manjaro)
         MENU_ITEMS+=("Setup Chaotic-AUR")
+        MENU_ITEMS+=("Applications")
         ;;
 esac
 
 MENU_ITEMS+=(
-    "Applications"
     "Copy dotfiles"
 )
 

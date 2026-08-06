@@ -37,20 +37,8 @@ case "$ID" in
         PKG_INFO="pacman -Si"
         PKG_NAME="pacman"
         ;;
-    ubuntu|debian|linuxmint|pop)
-        PKG_INSTALL="sudo apt install -y"
-        PKG_CHECK="dpkg -s"
-        PKG_INFO="apt show"
-        PKG_NAME="apt"
-        ;;
-    fedora)
-        PKG_INSTALL="sudo dnf install -y"
-        PKG_CHECK="rpm -q"
-        PKG_INFO="dnf info"
-        PKG_NAME="dnf"
-        ;;
     *)
-        echo "Unsupported distro."
+        echo "Unsupported distro (Applications installer requires an Arch-based distro)."
         exit 1
         ;;
 esac
@@ -134,29 +122,11 @@ SELECTED=$(
 bash -c '
 pkg=\$(printf \"%s\" \"\$1\" | sed \"s/\x1b\[[0-9;]*m//g\")
 
-case \"$ID\" in
-    arch|cachyos|endeavouros|manjaro)
-        if pacman -Q \"\$pkg\" >/dev/null 2>&1; then
-            echo \"Installed on this system\"
-            echo
-        fi
-        pacman -Si \"\$pkg\" 2>/dev/null
-        ;;
-    ubuntu|debian|linuxmint|pop)
-        dpkg -s \"\$pkg\" >/dev/null 2>&1 && {
-            echo \"Installed on this system\"
-            echo
-        }
-        apt show \"\$pkg\" 2>/dev/null
-        ;;
-    fedora)
-        rpm -q \"\$pkg\" >/dev/null 2>&1 && {
-            echo \"Installed on this system\"
-            echo
-        }
-        dnf info \"\$pkg\" 2>/dev/null
-        ;;
-esac
+if pacman -Q \"\$pkg\" >/dev/null 2>&1; then
+    echo \"Installed on this system\"
+    echo
+fi
+pacman -Si \"\$pkg\" 2>/dev/null
 ' _ {}
 " \
         --preview-window=right:55%:wrap
