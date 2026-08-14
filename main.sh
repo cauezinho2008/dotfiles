@@ -13,6 +13,7 @@ APP_SCRIPT="$REPO_DIR/install_apps.sh"
 COPY_SCRIPT="$REPO_DIR/copy_dotfiles.sh"
 KDE_SCRIPT="$REPO_DIR/kde.sh"
 RESTORE_SCRIPT="$REPO_DIR/restore_backup.sh"
+BOOT_SCRIPT="$REPO_DIR/boot.sh"
 
 # ==========================================================
 # Detect distro
@@ -170,6 +171,7 @@ esac
 
 MENU_ITEMS+=(
     "Copy dotfiles"
+    "Boot scripts"
 )
 
 # Show only on KDE Plasma
@@ -200,6 +202,10 @@ CHOICE=$(
 
         "Copy dotfiles")
             run_script "$COPY_SCRIPT" "Copy dotfiles"
+            ;;
+
+        "Boot scripts")
+            run_script "$BOOT_SCRIPT" "Boot scripts"
             ;;
 
         "KDE appearance")
