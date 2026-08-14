@@ -1,53 +1,161 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
+
+# ==========================================================
+# Theme
+# ==========================================================
+
+export GUM_CHOOSE_CURSOR_FOREGROUND="#6A9EFF"
+export GUM_CHOOSE_SELECTED_FOREGROUND="#6A9EFF"
+
+export GUM_CONFIRM_PROMPT_FOREGROUND="#6A9EFF"
+export GUM_CONFIRM_SELECTED_FOREGROUND="#FFFFFF"
+export GUM_CONFIRM_SELECTED_BACKGROUND="#217CB5"
+
+export GUM_INPUT_CURSOR_FOREGROUND="#6A9EFF"
+export GUM_SPIN_SPINNER_FOREGROUND="#6A9EFF"
+
+export FZF_DEFAULT_OPTS="
+--color=bg:-1,bg+:#112240,fg:#d0d0d0,fg+:#ffffff
+--color=border:#4A6FA5,header:#6A9EFF,info:#6A9EFF
+--color=pointer:#6A9EFF,marker:#6A9EFF,prompt:#6A9EFF
+--color=spinner:#6A9EFF,hl:#6A9EFF,hl+:#8BB8FF
+"
+# ==========================================================
+# Paths
+# ==========================================================
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 BOOT_DIR="$REPO_DIR/boot"
+ORDER_FILE="$BOOT_DIR/order.txt"
 
-if [[ ! -d "$BOOT_DIR" ]]; then
+[[ -d "$BOOT_DIR" ]] || {
     echo "boot folder not found"
-    read -rp "Press Enter to return..."
-    exit 0
-fi
+    read -rp "Press Enter..."
+    exit 1
+}
 
-mapfile -t SCRIPTS < <(
-    find "$BOOT_DIR" -maxdepth 1 -type f -name "*.sh" | sort
-)
+[[ -f "$ORDER_FILE" ]] || {
+    echo "order.txt not found"
+    read -rp "Press Enter..."
+    exit 1
+}
 
-if [[ ${#SCRIPTS[@]} -eq 0 ]]; then
-    echo "No scripts in boot folder"
-    read -rp "Press Enter to return..."
-    exit 0
-fi
+# ==========================================================
+# Load ordered entries
+# ==========================================================
+
+ENTRIES=()
+
+while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    [[ "$line" =~ ^# ]] && continue
+
+    [[ -f "$APPEAR_DIR/$line.sh" ]] || continue
+
+    ENTRIES+=("$line")
+done < "$ORDER_FILE"
+
+[[ ${#ENTRIES[@]} -eq 0 ]] && exit 1
+
+# ==========================================================
+# Header
+# ==========================================================
+
+clear
+
+gum style \
+    --foreground 39 \
+    --bold \
+    --align center \
+"Boot config"
+
+echo
+
+gum style \
+    --foreground 33 \
+    --align center \
+"Tab: Toggle   Ctrl+A: All   Ctrl+D: None   Enter: Apply"
+
+echo
+
+# ==========================================================
+# Selection
+# ==========================================================
 
 SELECTED=$(
-    printf "%s\n" "${SCRIPTS[@]}" |
-    sed "s|$BOOT_DIR/||" |
+    printf "%s\n" "${ENTRIES[@]}" |
     fzf \
         --multi \
         --layout=reverse \
         --border=rounded \
         --height=75% \
-        --prompt="boot: " \
+        --prompt="Boot: " \
         --pointer="▶ " \
         --marker="*" \
         --bind 'tab:toggle' \
         --bind 'ctrl-a:select-all' \
         --bind 'ctrl-d:deselect-all' \
-        --bind 'esc:abort' \
-        --color=bg:-1,bg+:#112240,fg:#d0d0d0,fg+:#ffffff \
-        --color=border:#4A6FA5,header:#6A9EFF,info:#6A9EFF \
-        --color=pointer:#6A9EFF,marker:#6A9EFF,prompt:#6A9EFF \
-        --color=spinner:#6A9EFF,hl:#6A9EFF,hl+:#8BB8FF
+        --preview "$REPO_DIR/preview.sh {} appearance" \
+        --preview-window=right:55%:wrap:cycle
 ) || exit 0
 
 [[ -z "$SELECTED" ]] && exit 0
 
-while IFS= read -r name; do
-    [[ -z "$name" ]] && continue
-    bash "$BOOT_DIR/$name"
+# ==========================================================
+# Confirmation
+# ==========================================================
+
+clear
+
+gum style \
+    --foreground 196 \
+    --bold \
+"This will override your current configuration for:"
+
+echo
+
+while IFS= read -r item; do
+    [[ -z "$item" ]] && continue
+    echo " • $item"
 done <<< "$SELECTED"
 
 echo
-read -rp "Press Enter to return..."
+
+gum style \
+    --foreground 214 \
+"This cannot be undone."
+
+echo
+
+gum confirm "Continue?" || exit 0
+
+# ==========================================================
+# Run selected in ORDER
+# ==========================================================
+
+while IFS= read -r ordered; do
+    [[ -z "$ordered" ]] && continue
+
+    while IFS= read -r selected; do
+        [[ "$ordered" == "$selected" ]] || continue
+
+      if ! gum spin \
+    --spinner dot \
+    --title "Applying $selected..." \
+    -- bash "$BOOT_DIR/$selected.sh"; then
+    echo
+    echo "Failed applying: $selected"
+    read -rp "Press Enter to continue..."
+fi
+
+    done <<< "$SELECTED"
+
+done < "$ORDER_FILE"
+
+echo
+gum style \
+    --foreground 82 \
+    --align center \
+"Boot setup complete."
+echo
