@@ -153,9 +153,11 @@ while IFS= read -r name; do
     fi
 
 
-    # hooks
-    if [[ -f "$HOOKS_DIR/$name.sh" ]]; then
-        bash "$HOOKS_DIR/$name.sh"
+    # hooks (prefer exact name, fall back to name without trailing "rc")
+    HOOK="$HOOKS_DIR/$name.sh"
+    [[ -f "$HOOK" ]] || HOOK="$HOOKS_DIR/${name%rc}.sh"
+    if [[ -f "$HOOK" ]]; then
+        bash "$HOOK"
     fi
 
 done <<< "$SELECTED"

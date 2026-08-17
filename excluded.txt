@@ -25,3 +25,7 @@ user-places.xbel
 breezerc
 dolphin
 ardour9
+gwenviewrc
+kcalcrc
+ksplashrc
+kwriterc
