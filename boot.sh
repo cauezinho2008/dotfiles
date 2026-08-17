@@ -143,7 +143,7 @@ while IFS= read -r ordered; do
       if ! gum spin \
     --spinner dot \
     --title "Applying $selected..." \
-    -- bash "$BOOT_DIR/$selected.sh"; then
+    -- sudo bash "$BOOT_DIR/$selected.sh"; then
     echo
     echo "Failed applying: $selected"
     read -rp "Press Enter to continue..."
