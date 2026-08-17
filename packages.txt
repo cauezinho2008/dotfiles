@@ -17,3 +17,6 @@ helium-browser-bin
 chafa
 openrgb
 opencode
+jre-openjdk
+kamoso
+rocm-smi-lib
