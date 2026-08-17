@@ -51,7 +51,7 @@ while IFS= read -r line; do
     [[ -z "$line" ]] && continue
     [[ "$line" =~ ^# ]] && continue
 
-    [[ -f "$APPEAR_DIR/$line.sh" ]] || continue
+    [[ -f "$BOOT_DIR/$line.sh" ]] || continue
 
     ENTRIES+=("$line")
 done < "$ORDER_FILE"
