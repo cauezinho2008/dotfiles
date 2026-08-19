@@ -7,4 +7,3 @@ localsend.desktop
 steam.desktop
 ardour9.desktop
 kitty.desktop
-com.shellyorg.shelly.desktop
