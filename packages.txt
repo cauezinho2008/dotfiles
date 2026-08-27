@@ -3,7 +3,6 @@ fastfetch
 kitty
 cava
 cmatrix
-yazi
 prismlauncher
 kdenlive
 ardour
