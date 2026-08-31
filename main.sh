@@ -25,11 +25,11 @@ DISTRO_ID="$ID"
 DISTRO_NAME="$PRETTY_NAME"
 
 case "$DISTRO_ID" in
-    arch|cachyos|endeavouros|manjaro)
+    artix|arch|cachyos|endeavouros|manjaro)
         INSTALL_CMD="sudo pacman -Sy --needed --noconfirm"
         REMOVE_CMD="sudo pacman -Rns --noconfirm"
         ;;
-    ubuntu|debian|linuxmint|pop)
+    minios|ubuntu|debian|linuxmint|pop)
         INSTALL_CMD="sudo apt update && sudo apt install -y"
         REMOVE_CMD="sudo apt remove -y"
         ;;

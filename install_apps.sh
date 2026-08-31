@@ -31,7 +31,7 @@ PACKAGES_FILE="$REPO_DIR/packages.txt"
 source /etc/os-release
 
 case "$ID" in
-    arch|cachyos|endeavouros|manjaro)
+    artix|arch|cachyos|endeavouros|manjaro)
         PKG_INSTALL="sudo pacman -S --needed"
         PKG_CHECK="pacman -Q"
         PKG_INFO="pacman -Si"
