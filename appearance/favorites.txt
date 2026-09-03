@@ -3,7 +3,8 @@ org.prismlauncher.PrismLauncher.desktop
 systemsettings.desktop
 org.kde.kdenlive.desktop
 org.kde.dolphin.desktop
-localsend.desktop
+mcpelauncher-ui-git.desktop
 steam.desktop
 ardour9.desktop
 kitty.desktop
+localsend.desktop

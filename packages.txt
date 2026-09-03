@@ -4,6 +4,7 @@ kitty
 cava
 cmatrix
 prismlauncher
+mcpelauncher-ui
 kdenlive
 ardour
 localsend
