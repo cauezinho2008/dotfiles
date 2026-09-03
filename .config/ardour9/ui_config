@@ -11,7 +11,7 @@
     <Option name="waveform-clip-level" value="-0.5"/>
     <Option name="recent-session-sort" value="1"/>
     <Option name="action-table-columns" value="0"/>
-    <Option name="freesound-dir" value="$HOME/.cache/ardour9/freesound"/>
+    <Option name="freesound-dir" value="/home/caue/.cache/ardour9/freesound"/>
     <Option name="default-window-position" value="WIN_POS_CENTER"/>
     <Option name="insert-at-position" value="2"/>
   </UI>
