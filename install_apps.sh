@@ -21,8 +21,8 @@ export GUM_SPIN_SPINNER_FOREGROUND="#6A9EFF"
 
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-PACKAGES_FILE="$REPO_DIR/packages.txt"
+DIR="$(cd "$(dirname "$0")" && pwd)"
+FILE="$DIR/packages.txt"
 
 # ==========================================================
 # Detect distro
@@ -31,11 +31,11 @@ PACKAGES_FILE="$REPO_DIR/packages.txt"
 source /etc/os-release
 
 case "$ID" in
-    artix|arch|cachyos|endeavouros|manjaro)
-        PKG_INSTALL="sudo pacman -S --needed"
-        PKG_CHECK="pacman -Q"
-        PKG_INFO="pacman -Si"
-        PKG_NAME="pacman"
+    artix|arch|cachyos|endeavouros|manjaro|steamos)
+        INSTALL="sudo pacman -S --needed"
+        CHECK="pacman -Q"
+        INFO="pacman -Si"
+        NAME="pacman"
         ;;
     *)
         echo "Unsupported distro (Applications installer requires an Arch-based distro)."
@@ -60,7 +60,7 @@ echo
 gum style \
     --foreground 33 \
     --align center \
-"Package manager: $PKG_NAME"
+"Package manager: $NAME"
 
 echo
 gum style \
@@ -74,24 +74,24 @@ echo
 # Read packages
 # ==========================================================
 
-if [[ ! -f "$PACKAGES_FILE" ]]; then
+if [[ ! -f "$FILE" ]]; then
     gum style --foreground 196 "packages.txt not found."
     exit 1
 fi
 
 mapfile -t PACKAGES < <(
-    grep -v '^#' "$PACKAGES_FILE" |
+    grep -v '^#' "$FILE" |
     grep -v '^[[:space:]]*$'
 )
 
-DISPLAY_LIST=()
+LIST=()
 
 for pkg in "${PACKAGES[@]}"; do
-    if $PKG_CHECK "$pkg" >/dev/null 2>&1; then
+    if $CHECK "$pkg" >/dev/null 2>&1; then
         # Installed: dim + strikethrough (if terminal supports it)
-        DISPLAY_LIST+=($'\033[2;9m'"$pkg"$'\033[0m')
+        LIST+=($'\033[2;9m'"$pkg"$'\033[0m')
     else
-        DISPLAY_LIST+=("$pkg")
+        LIST+=("$pkg")
     fi
 done
 
@@ -100,7 +100,7 @@ done
 # ==========================================================
 
 SELECTED=$(
-    printf "%s\n" "${DISPLAY_LIST[@]}" |
+    printf "%s\n" "${LIST[@]}" |
     fzf \
         --multi \
         --ansi \
@@ -145,7 +145,7 @@ while IFS= read -r line; do
     sed 's/\x1b\[[0-9;]*m//g' |
     xargs)
 
-    if ! $PKG_CHECK "$pkg" >/dev/null 2>&1; then
+    if ! $CHECK "$pkg" >/dev/null 2>&1; then
         TO_INSTALL+=("$pkg")
     fi
 done <<< "$SELECTED"

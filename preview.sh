@@ -3,8 +3,8 @@ set -euo pipefail
 
 ITEM="${1:-}"
 
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-PREVIEW_DIR="$REPO_DIR/preview"
+DIR="$(cd "$(dirname "$0")" && pwd)"
+PREVIEW="$DIR/preview"
 
 clear_kitty_images() {
     if [[ "${TERM:-}" == xterm-kitty ]]; then
@@ -45,15 +45,15 @@ show_text() {
 }
 
 # txt first
-if [[ -f "$PREVIEW_DIR/$ITEM.txt" ]]; then
-    show_text "$PREVIEW_DIR/$ITEM.txt"
+if [[ -f "$PREVIEW/$ITEM.txt" ]]; then
+    show_text "$PREVIEW/$ITEM.txt"
     exit 0
 fi
 
 # images after
 for ext in png jpg jpeg webp; do
-    if [[ -f "$PREVIEW_DIR/$ITEM.$ext" ]]; then
-        show_image "$PREVIEW_DIR/$ITEM.$ext"
+    if [[ -f "$PREVIEW/$ITEM.$ext" ]]; then
+        show_image "$PREVIEW/$ITEM.$ext"
         exit 0
     fi
 done

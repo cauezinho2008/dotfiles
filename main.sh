@@ -6,14 +6,13 @@ set -euo pipefail
 # Cauê's Dotfiles Installer
 # ==========================================================
 
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+DIR="$(cd "$(dirname "$0")" && pwd)"
 
-CHAOTIC_SCRIPT="$REPO_DIR/setup_chaotic.sh"
-APP_SCRIPT="$REPO_DIR/install_apps.sh"
-COPY_SCRIPT="$REPO_DIR/copy_dotfiles.sh"
-KDE_SCRIPT="$REPO_DIR/kde.sh"
-RESTORE_SCRIPT="$REPO_DIR/restore_backup.sh"
-BOOT_SCRIPT="$REPO_DIR/boot.sh"
+CHAOTIC_SCRIPT="$DIR/setup_chaotic.sh"
+APP_SCRIPT="$DIR/install_apps.sh"
+COPY_SCRIPT="$DIR/copy_dotfiles.sh"
+KDE_SCRIPT="$DIR/kde.sh"
+BOOT_SCRIPT="$DIR/boot.sh"
 
 # ==========================================================
 # Detect distro
@@ -25,15 +24,15 @@ DISTRO_ID="$ID"
 DISTRO_NAME="$PRETTY_NAME"
 
 case "$DISTRO_ID" in
-    artix|arch|cachyos|endeavouros|manjaro)
+    artix|arch|cachyos|endeavouros|manjaro|steamos)
         INSTALL_CMD="sudo pacman -Sy --needed --noconfirm"
         REMOVE_CMD="sudo pacman -Rns --noconfirm"
         ;;
-    minios|ubuntu|debian|linuxmint|pop)
+    minios|ubuntu|debian|linuxmint|pop|kubuntu|lubuntu)
         INSTALL_CMD="sudo apt update && sudo apt install -y"
         REMOVE_CMD="sudo apt remove -y"
         ;;
-    fedora)
+    fedora|bazzite)
         INSTALL_CMD="sudo dnf install -y"
         REMOVE_CMD="sudo dnf remove -y"
         ;;
@@ -48,7 +47,7 @@ esac
 # Dependency check
 # ==========================================================
 
-DEPS=(gum fzf chafa)
+DEPS=(git gum fzf chafa)
 INSTALLED_NOW=()
 MISSING=()
 
@@ -79,16 +78,6 @@ if [[ ${#MISSING[@]} -gt 0 ]]; then
 fi
 
 # ==========================================================
-# Gum colors
-# ==========================================================
-
-#export GUM_CHOOSE_CURSOR_FOREGROUND="39"
-#export GUM_CHOOSE_SELECTED_FOREGROUND="39"
-#export GUM_CHOOSE_HEADER_FOREGROUND="39"
-#export GUM_CONFIRM_PROMPT_FOREGROUND="39"
-#export GUM_CONFIRM_SELECTED_FOREGROUND="39"
-#export GUM_SPIN_SPINNER_FOREGROUND="39"
-# ==========================================================
 # Gum theme
 # ==========================================================
 
@@ -118,7 +107,7 @@ echo
     gum style \
         --foreground 33 \
         --align center \
-"$(echo "$DISTRO_NAME" | cut -d' ' -f1) detected"
+"$(echo "$DISTRO_NAME" | cut -d' ' -f1)"
 
 
 }
@@ -163,7 +152,7 @@ MENU_ITEMS=()
 
 # Show only on Arch-based distros
 case "$DISTRO_ID" in
-    arch|cachyos|endeavouros|manjaro)
+    artix|arch|cachyos|endeavouros|manjaro|steamos)
         MENU_ITEMS+=("Setup Chaotic-AUR")
         MENU_ITEMS+=("Applications")
         ;;
@@ -212,10 +201,6 @@ CHOICE=$(
             run_script "$KDE_SCRIPT" "KDE appearance"
             ;;
 
-        "Restore backup")
-            run_script "$RESTORE_SCRIPT" "Restore backup"
-            ;;
-
         "Exit"|*)
             break
             ;;
@@ -234,17 +219,9 @@ if [[ ${#INSTALLED_NOW[@]} -gt 0 ]]; then
     echo
 
     if gum confirm "Remove temporary dependencies before exiting?"; then
-        case "$DISTRO_ID" in
-            arch|cachyos|endeavouros|manjaro)
-                sudo pacman -Rns --noconfirm "${INSTALLED_NOW[@]}"
-                ;;
-            ubuntu|debian|linuxmint|pop)
-                sudo apt remove -y "${INSTALLED_NOW[@]}"
-                ;;
-            fedora)
-                sudo dnf remove -y "${INSTALLED_NOW[@]}"
-                ;;
-        esac
+
+    REMOVE_CMD "$INSTALLED_NOW"
+
     fi
 fi
 clear
@@ -265,7 +242,7 @@ echo
 gum style \
     --foreground 245 \
 "Most changes are already active.
-
+but,
 If you installed applications or applied KDE appearance,
 a reboot is recommended to ensure everything is loaded correctly.
 

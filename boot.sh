@@ -25,8 +25,8 @@ export FZF_DEFAULT_OPTS="
 # Paths
 # ==========================================================
 
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-BOOT_DIR="$REPO_DIR/boot"
+DIR="$(cd "$(dirname "$0")" && pwd)"
+BOOT_DIR="$DIR/boot"
 ORDER_FILE="$BOOT_DIR/order.txt"
 
 [[ -d "$BOOT_DIR" ]] || {
@@ -96,7 +96,7 @@ SELECTED=$(
         --bind 'tab:toggle' \
         --bind 'ctrl-a:select-all' \
         --bind 'ctrl-d:deselect-all' \
-        --preview "$REPO_DIR/preview.sh {} appearance" \
+        --preview "$DIR/preview.sh {} appearance" \
         --preview-window=right:55%:wrap:cycle
 ) || exit 0
 
@@ -141,7 +141,7 @@ while IFS= read -r ordered; do
         [[ "$ordered" == "$selected" ]] || continue
 
       if ! gum spin \
-    --spinner dot \
+    --spinner line \
     --title "Applying $selected..." \
     -- sudo bash "$BOOT_DIR/$selected.sh"; then
     echo

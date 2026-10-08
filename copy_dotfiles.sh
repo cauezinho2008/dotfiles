@@ -20,15 +20,15 @@ export GUM_SPIN_SPINNER_FOREGROUND="#6A9EFF"
 # Paths
 # ==========================================================
 
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+DIR="$(cd "$(dirname "$0")" && pwd)"
 
-CONFIG_DIR="$REPO_DIR/.config"
-LOCAL_SHARE_DIR="$REPO_DIR/.local/share"
+CONFIG_DIR="$DIR/.config"
+LOCAL_SHARE_DIR="$DIR/.local/share"
 
-HOOKS_DIR="$REPO_DIR/hooks"
-PREVIEW_DIR="$REPO_DIR/preview"
+HOOKS_DIR="$DIR/hooks"
+PREVIEW_DIR="$DIR/preview"
 
-EXCLUDED_FILE="$REPO_DIR/excluded.txt"
+EXCLUDED_FILE="$DIR/excluded.txt"
 
 # ==========================================================
 # Header
@@ -127,7 +127,7 @@ SELECTED=$(
         --color=border:#4A6FA5,header:#6A9EFF,info:#6A9EFF \
         --color=pointer:#6A9EFF,marker:#6A9EFF,prompt:#6A9EFF \
         --color=spinner:#6A9EFF,hl:#6A9EFF,hl+:#8BB8FF \
-        --preview "$REPO_DIR/preview.sh {} config"\
+        --preview "$DIR/preview.sh {} config"\
         --preview-window=right:55%:wrap
 ) || exit 0
 
@@ -140,7 +140,7 @@ SELECTED=$(
 while IFS= read -r name; do
     [[ -z "$name" ]] && continue
 
-    gum spin --spinner dot --title "Applying $name..." -- sleep 0.1
+    gum spin --spinner line --title "Applying $name..." -- sleep 0.1
 
     # config
     if [[ -e "$CONFIG_DIR/$name" ]]; then
