@@ -2,16 +2,7 @@
 set -euo pipefail
 
 # ==========================================================
-# CachyOS boot optimizer — GRUB silent boot
-#
-# Makes normal boot silent:
-#   - adds quiet/loglevel/splash options to the kernel cmdline
-#   - suppresses "Loading Linux ..." / "Loading initial ramdisk ..."
-#     messages in /etc/grub.d/10_linux
-#   - neutralizes executable backup GRUB generators
-#   - regenerates /boot/grub/grub.cfg (never edits it directly)
-#
-# Usage: grub.sh [--dry-run] [--restore]
+# CachyOS boot optimizer - GRUB silent boot
 # ==========================================================
 
 BACKUP_ROOT="/var/backups/cachyos-boot-optimizer"
@@ -91,7 +82,7 @@ ensure_cmdline() {
 
     line="$(grep -E "^${key}=" "$GRUB_DEFAULT" 2>/dev/null | tail -n1)"
     if [[ -z "$line" ]]; then
-        warn "${key} not found in $GRUB_DEFAULT — skipping"
+        warn "${key} not found in $GRUB_DEFAULT - skipping"
         return 0
     fi
 
@@ -119,15 +110,19 @@ ensure_cmdline() {
 # ---- 2. suppress loading messages in 10_linux ----------------------
 
 silence_10_linux() {
-    if grep -qE '^[[:space:]]*echo "\$message"' "$GRUB_LINUX" 2>/dev/null; then
+    # Match the echo lines inside heredocs that print the loading messages:
+    #   echo '$(echo "$message" | grub_quote)'
+    # Only match lines that are NOT already commented out (don't start with # after whitespace)
+    if grep -q "^[[:blank:]]*echo[[:blank:]]*'\\\$(echo \"\\\$message\" | grub_quote)'" "$GRUB_LINUX" 2>/dev/null; then
         if grep -q 'cachyos-silent-boot' "$GRUB_LINUX" 2>/dev/null; then
             ok "loading messages already suppressed in 10_linux"
         else
             if [[ $DRY_RUN -eq 1 ]]; then
-                info "would comment out 'echo \$message' lines in $GRUB_LINUX"
+                info "would comment out loading message echo lines in $GRUB_LINUX"
             else
                 backup_file "$GRUB_LINUX"
-                sed -i "s|^\([[:space:]]*\)echo \"\$message\"|$SILENT_MARKER\\n# \\1echo \"\$message\"|" "$GRUB_LINUX"
+                # Comment out the echo lines that print "Loading Linux..." and "Loading initial ramdisk..."
+                sed -i "/^[[:blank:]]*echo[[:blank:]]*'\\\$(echo \"\\\$message\" | grub_quote)'/s|^\([[:blank:]]*\)|$SILENT_MARKER\n# \1|" "$GRUB_LINUX"
                 ok "suppressed loading messages in 10_linux"
             fi
             CHANGED=1
@@ -202,18 +197,18 @@ report() {
         echo "  executable .bak generators: none"
     fi
 
-    cat <<'EOF'
+    cat <<'EOT'
 
   Manual BIOS settings (cannot be automated from Linux):
-   • BIOS Fast Boot:            ENABLED
-   • BIOS setup / F2 timeout:   0
-   • Boot-device / F12 timeout: 0
-   • Unused SATA/data ports:    DISABLED
-   • Network Stack:             DISABLED
-   • IPv4/IPv6 PXE & HTTP Boot: disabled
-   • USB boot:                  enabled and FIRST
-   • CachyOS / NVMe boot entry: available
-EOF
+   - BIOS Fast Boot:            ENABLED
+   - BIOS setup / F2 timeout:   0
+   - Boot-device / F12 timeout: 0
+   - Unused SATA/data ports:    DISABLED
+   - Network Stack:             DISABLED
+   - IPv4/IPv6 PXE & HTTP Boot: disabled
+   - USB boot:                  enabled and FIRST
+   - CachyOS / NVMe boot entry: available
+EOT
 }
 
 # ---- main ----------------------------------------------------------
@@ -244,7 +239,7 @@ if [[ $CHANGED -eq 1 ]] || [[ $DRY_RUN -eq 1 ]]; then
     regen_grub
     verify_entries
 else
-    ok "no changes needed — GRUB already silent"
+    ok "no changes needed - GRUB already silent"
 fi
 
 report
