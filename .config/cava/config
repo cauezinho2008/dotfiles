@@ -2,8 +2,8 @@
 # Remove the ; to change parameters.
 
 [general]
-framerate = 75
-bar_width = 1.7
+framerate = 60
+bar_width = 1.8
 bar_spacing = 1
 autosens = 0
 sensitivity = 100
@@ -19,18 +19,16 @@ channels = stereo
 mono_option = average
 
 [smoothing]
-integral = 80
+integral = 1
 monstercat = 0
 waves = 0
 
 [color]
 gradient = 1
-gradient_count = 4
+gradient_count = 2
 
-gradient_color_1 = '#00e5ff'
-gradient_color_2 = '#00bfff'
-gradient_color_3 = '#27c7ff'
-gradient_color_4 = '#0088ff'
+gradient_color_1 = '#008CFF'
+gradient_color_2 = '#38B6FF'
 
 [eq]
 1 = 1
@@ -41,7 +39,7 @@ gradient_color_4 = '#0088ff'
 [general]
 
 # Auto reload config if the configuration file has changed. 1 = on, 0 = off.
-; live-config = 0
+live-config = 1
 
 # Smoothing mode. Can be 'normal', 'scientific' or 'waves'. DEPRECATED as of 0.6.0
 ; mode = normal
