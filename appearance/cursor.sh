@@ -10,13 +10,12 @@ GITHUB_REPO="ful1e5/BreezeX_Cursor"
 GITHUB_API="https://api.github.com/repos/$GITHUB_REPO/releases/latest"
 XDG_ENV_DIR="$HOME/.config/environment.d"
 
-# ── Download & install ───────────────────────────────────────
+# ── 1. Download & install cursor theme ───────────────────────
+echo "Downloading and installing $CURSOR_NAME..."
 
 if [[ -d "$CURSOR_DIR" && -f "$CURSOR_DIR/index.theme" ]]; then
-    echo "Cursor $CURSOR_NAME already installed at $CURSOR_DIR"
+    echo "  Already installed at $CURSOR_DIR"
 else
-    echo "Downloading $CURSOR_NAME from GitHub..."
-
     TMPDIR="$(mktemp -d)"
     trap 'rm -rf "$TMPDIR"' EXIT
 
@@ -29,161 +28,140 @@ else
     fi
 
     curl -sL -o "$TMPDIR/$CURSOR_NAME.tar.xz" "$DL_URL"
-
-    echo "Installing to $HOME/.local/share/icons/..."
     mkdir -p "$HOME/.local/share/icons"
     tar -xf "$TMPDIR/$CURSOR_NAME.tar.xz" -C "$HOME/.local/share/icons/"
+    echo "  Installed to $HOME/.local/share/icons/"
 fi
 
-# ── Update icon cache ────────────────────────────────────────
+# System-wide install (optional - requires sudo)
+SYS_CURSOR_DIR="/usr/share/icons/$CURSOR_NAME"
+if [[ ! -d "$SYS_CURSOR_DIR" ]]; then
+    echo "  Installing system-wide to $SYS_CURSOR_DIR..."
+    if [[ "$EUID" -eq 0 ]]; then
+        mkdir -p "/usr/share/icons"
+        cp -r "$HOME/.local/share/icons/$CURSOR_NAME" "/usr/share/icons/"
+        gtk-update-icon-cache -f -t "/usr/share/icons/$CURSOR_NAME" 2>/dev/null || true
+    elif sudo -n true 2>/dev/null; then
+        sudo mkdir -p "/usr/share/icons"
+        sudo cp -r "$HOME/.local/share/icons/$CURSOR_NAME" "/usr/share/icons/"
+        sudo gtk-update-icon-cache -f -t "/usr/share/icons/$CURSOR_NAME" 2>/dev/null || true
+    else
+        echo "  (Skipping system-wide install - requires sudo. Run with sudo or as root for system-wide.)"
+    fi
+fi
 
-echo "Updating icon cache..."
+# Set system-wide default cursor
+if [[ "$EUID" -eq 0 ]]; then
+    mkdir -p /usr/share/icons/default
+    tee /usr/share/icons/default/index.theme >/dev/null <<SYS
+[Icon Theme]
+Inherits=$CURSOR_NAME
+SYS
+elif sudo -n true 2>/dev/null; then
+    sudo mkdir -p /usr/share/icons/default
+    sudo tee /usr/share/icons/default/index.theme >/dev/null <<SYS
+[Icon Theme]
+Inherits=$CURSOR_NAME
+SYS
+else
+    echo "  (Skipping system-wide default - requires sudo)"
+fi
+
 gtk-update-icon-cache -f -t "$CURSOR_DIR" 2>/dev/null || true
 
-# ── KDE Plasma ───────────────────────────────────────────────
-
+# ── 2. KDE Plasma (kcminputrc + kdedefaults) ──────────────────
 echo "Applying to KDE Plasma..."
 
 mkdir -p "$HOME/.config/kdedefaults"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key cursorTheme "$CURSOR_NAME"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key cursorSize "$CURSOR_SIZE"
 
-# ── Launch feedback ──────────────────────────────────────────
+# Apply to current user config too
+kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key cursorTheme "$CURSOR_NAME"
+kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key cursorSize "$CURSOR_SIZE"
 
-kwriteconfig6 --file "$HOME/.config/klaunchrc" --group FeedbackStyle --key FeedbackEnabled "true"
-kwriteconfig6 --file "$HOME/.config/klaunchrc" --group FeedbackStyle --key BusyCursor "Bouncing"
-kwriteconfig6 --file "$HOME/.config/klaunchrc" --group FeedbackStyle --key BusyCursorTimeout "10"
-echo "Enabled launch feedback (bouncing, 10s)"
+# ── 3. klaunchrc (copy from repo) ────────────────────────────
+echo "Copying klaunchrc..."
+cp "$REPO_DIR/.config/klaunchrc" "$HOME/.config/klaunchrc"
+echo "  Applied launch feedback settings"
 
-# ── Disable shake cursor ─────────────────────────────────────
-
-kwriteconfig6 --file "$HOME/.config/kwinrc" --group Plugins --key shakecursorEnabled "false"
-echo "Disabled shake cursor accessibility feature"
-
-# ── GTK 3 ────────────────────────────────────────────────────
-
+# ── 4. GTK 3 ──────────────────────────────────────────────────
 GTK3="$HOME/.config/gtk-3.0/settings.ini"
 mkdir -p "$(dirname "$GTK3")"
-
-if [[ -f "$GTK3" ]]; then
-    sed -i "s/^gtk-cursor-theme-name.*/gtk-cursor-theme-name = $CURSOR_NAME/" "$GTK3"
-    sed -i "s/^gtk-cursor-theme-size.*/gtk-cursor-theme-size = $CURSOR_SIZE/" "$GTK3"
-else
-    cat > "$GTK3" << EOF
-[Settings]
-gtk-cursor-theme-name = $CURSOR_NAME
-gtk-cursor-theme-size = $CURSOR_SIZE
-EOF
-fi
-
+{
+    echo "[Settings]"
+    echo "gtk-cursor-theme-name = $CURSOR_NAME"
+    echo "gtk-cursor-theme-size = $CURSOR_SIZE"
+} > "$GTK3"
 echo "Applied GTK 3 cursor settings"
 
-# ── GTK 4 ────────────────────────────────────────────────────
-
+# ── 5. GTK 4 ──────────────────────────────────────────────────
 GTK4="$HOME/.config/gtk-4.0/settings.ini"
 mkdir -p "$(dirname "$GTK4")"
-
-if [[ -f "$GTK4" ]]; then
-    sed -i "s/^gtk-cursor-theme-name.*/gtk-cursor-theme-name=$CURSOR_NAME/" "$GTK4"
-    sed -i "s/^gtk-cursor-theme-size.*/gtk-cursor-theme-size=$CURSOR_SIZE/" "$GTK4"
-else
-    cat > "$GTK4" << EOF
-[Settings]
-gtk-cursor-theme-name=$CURSOR_NAME
-gtk-cursor-theme-size=$CURSOR_SIZE
-EOF
-fi
-
+{
+    echo "[Settings]"
+    echo "gtk-cursor-theme-name=$CURSOR_NAME"
+    echo "gtk-cursor-theme-size=$CURSOR_SIZE"
+} > "$GTK4"
 echo "Applied GTK 4 cursor settings"
 
-# ── GSettings (GNOME/GTK override for apps that ignore settings.ini) ──
+# ── 6. GSettings (GNOME/GTK apps) ────────────────────────────
 if command -v gsettings &>/dev/null; then
     gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR_NAME" 2>/dev/null || true
     gsettings set org.gnome.desktop.interface cursor-size "$CURSOR_SIZE" 2>/dev/null || true
     echo "Applied GSettings cursor settings"
 fi
 
-# ── Xresources (X11 / XWayland) ─────────────────────────────
-
+# ── 7. X11 / XWayland (.Xresources + autostart) ──────────────
 XR="$HOME/.Xresources"
 mkdir -p "$(dirname "$XR")"
-
-if [[ -f "$XR" ]]; then
-    sed -i '/^Xcursor\.theme:/d; /^Xcursor\.size:/d' "$XR"
-fi
-cat >> "$XR" << EOF
+sed -i '/^Xcursor\.theme:/d; /^Xcursor\.size:/d' "$XR" 2>/dev/null || true
+cat >> "$XR" << XEOF
 Xcursor.theme: $CURSOR_NAME
 Xcursor.size: $CURSOR_SIZE
-EOF
+XEOF
 
-# Merge into XWayland if running; also write a script for autostart
+# Merge now if XWayland running
 if command -v xrdb &>/dev/null; then
-    if xrdb -merge "$XR" 2>/dev/null; then
-        echo "  Merged into running XWayland"
-    else
-        echo "  XWayland not ready yet, will load on next login"
-    fi
+    xrdb -merge "$XR" 2>/dev/null && echo "  Merged into running XWayland" || echo "  Will load on next login"
 fi
 
-# Autostart helper to reload on XWayland start
+# Autostart for XWayland
 mkdir -p "$HOME/.config/autostart"
-cat > "$HOME/.config/autostart/xresources-load.desktop" << EOF
+cat > "$HOME/.config/autostart/xresources-load.desktop" << AUTOEOF
 [Desktop Entry]
 Type=Application
 Name=Load Xresources
 Exec=sh -c "xrdb -merge $XR"
 X-KDE-autostart-phase=2
 NoDisplay=true
-EOF
+AUTOEOF
 
 echo "Applied X11 cursor settings"
 
-# ── Environment vars for current session ─────────────────────
-export XCURSOR_THEME="$CURSOR_NAME"
-export XCURSOR_SIZE="$CURSOR_SIZE"
-
-# ── Wayland environment.d (persists on next login) ───────────
+# ── 8. Wayland environment.d (persists on next login) ─────────
 mkdir -p "$XDG_ENV_DIR"
-cat > "$XDG_ENV_DIR/cursor.conf" << EOF
+cat > "$XDG_ENV_DIR/cursor.conf" << ENV
 XCURSOR_THEME=$CURSOR_NAME
 XCURSOR_SIZE=$CURSOR_SIZE
-EOF
-
+ENV
 echo "Applied Wayland environment variables"
 
-# ── Hyprland ─────────────────────────────────────────────────
+# ── Helper: check if gdbus output indicates true ──────────────
+is_true() {
+    [[ "$1" == *"<true>"* ]]
+}
 
-HYPRLAND="$HOME/.config/hypr/hyprland.conf"
-if [[ -f "$HYPRLAND" ]]; then
-    sed -i '/^cursor=/d' "$HYPRLAND"
-    echo "cursor=$CURSOR_NAME $CURSOR_SIZE" >> "$HYPRLAND"
-    echo "Applied Hyprland cursor settings"
-fi
+# ── 9. Disable mouse acceleration (mice only) ─────────────────
+echo "Disabling mouse acceleration for mice..."
 
-# ── System-wide default (optional) ──────────────────────────
-
-if [[ "$EUID" -eq 0 ]]; then
-    DEFAULT_DIR="/usr/share/icons/default"
-    mkdir -p "$DEFAULT_DIR"
-    cat > "$DEFAULT_DIR/index.theme" << EOF
-[Icon Theme]
-Inherits=$CURSOR_NAME
-EOF
-    echo "Applied system-wide cursor default"
-fi
-# ── Disable mouse acceleration ──────────────────────────────
-
-echo "Disabling mouse acceleration..."
-
-# Write to actual kcminputrc (not just kdedefaults) with notify
+# KDE config
 kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAccelerationProfile "1" --notify
 kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key PointerAcceleration "0.000" --notify
-
-# Also write to kdedefaults for first-time setup
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAccelerationProfile "1"
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key PointerAcceleration "0.000"
 
-# Apply to all existing Libinput device sections in kcminputrc
+# Update existing Libinput device sections (mice only - skip touchpads)
 KCM="$HOME/.config/kcminputrc"
 if [[ -f "$KCM" ]]; then
     python3 - "$KCM" << 'PYEOF'
@@ -194,24 +172,25 @@ cfg.read(sys.argv[1])
 changed = False
 for section in cfg.sections():
     if section.startswith("Libinput"):
-        if cfg.get(section, "PointerAccelerationProfile", fallback=None) != "1":
-            cfg.set(section, "PointerAccelerationProfile", "1")
-            changed = True
-        if cfg.get(section, "PointerAcceleration", fallback=None) != "0.000":
-            cfg.set(section, "PointerAcceleration", "0.000")
-            changed = True
+        # Only apply to mice, not touchpads (touchpads have NaturalScroll)
+        if cfg.get(section, "NaturalScroll", fallback=None) is None:
+            if cfg.get(section, "PointerAccelerationProfile", fallback=None) != "1":
+                cfg.set(section, "PointerAccelerationProfile", "1")
+                changed = True
+            if cfg.get(section, "PointerAcceleration", fallback=None) != "0.000":
+                cfg.set(section, "PointerAcceleration", "0.000")
+                changed = True
 if changed:
     with open(sys.argv[1], "w") as f:
         cfg.write(f)
 PYEOF
 fi
 
-# gsettings for GNOME/GTK stack
+# GNOME/GTK stack
 command -v gsettings &>/dev/null && \
     gsettings set org.gnome.desktop.peripherals.mouse accel-profile 'flat' 2>/dev/null || true
 
-# Apply flat acceleration to all pointer devices via KWin D-Bus (Wayland)
-# Skips touchpads — they keep adaptive acceleration
+# KWin D-Bus (Wayland) - only for pointer devices that are NOT touchpads
 if command -v qdbus6 &>/dev/null; then
     for dev in $(qdbus6 org.kde.KWin 2>/dev/null | grep '/InputDevice/event'); do
         pointer=$(gdbus call --session --dest org.kde.KWin --object-path "$dev" \
@@ -220,7 +199,7 @@ if command -v qdbus6 &>/dev/null; then
         touchpad=$(gdbus call --session --dest org.kde.KWin --object-path "$dev" \
             --method org.freedesktop.DBus.Properties.Get \
             org.kde.KWin.InputDevice touchpad 2>/dev/null)
-        if [[ "$pointer" == "(<true>,")" && "$touchpad" != "(<true>,")" ]]; then
+        if is_true "$pointer" && ! is_true "$touchpad"; then
             gdbus call --session --dest org.kde.KWin --object-path "$dev" \
                 --method org.freedesktop.DBus.Properties.Set \
                 org.kde.KWin.InputDevice pointerAccelerationProfileFlat "<true>" 2>/dev/null || true
@@ -234,14 +213,39 @@ if command -v qdbus6 &>/dev/null; then
     done
 fi
 
-# ── Enable natural scrolling for touchpads ──────────────────────
+echo "Disabled mouse acceleration for mice"
+
+# ── 10. Enable natural scrolling for touchpads ────────────────
 echo "Enabling natural scrolling for touchpads..."
+
+# KDE config - apply to existing touchpad sections
+if [[ -f "$KCM" ]]; then
+    python3 - "$KCM" << 'PYEOF'
+import sys, configparser
+cfg = configparser.ConfigParser(strict=False)
+cfg.optionxform = str
+cfg.read(sys.argv[1])
+changed = False
+for section in cfg.sections():
+    if section.startswith("Libinput"):
+        # Touchpads typically have NaturalScroll setting
+        if cfg.get(section, "NaturalScroll", fallback=None) is not None:
+            if cfg.get(section, "NaturalScroll", fallback=None) != "true":
+                cfg.set(section, "NaturalScroll", "true")
+                changed = True
+if changed:
+    with open(sys.argv[1], "w") as f:
+        cfg.write(f)
+PYEOF
+fi
+
+# KWin D-Bus (Wayland) - only for touchpads
 if command -v qdbus6 &>/dev/null; then
     for dev in $(qdbus6 org.kde.KWin 2>/dev/null | grep '/InputDevice/event'); do
         touchpad=$(gdbus call --session --dest org.kde.KWin --object-path "$dev" \
             --method org.freedesktop.DBus.Properties.Get \
             org.kde.KWin.InputDevice touchpad 2>/dev/null)
-        if [[ "$touchpad" == "(<true>,")" ]]; then
+        if is_true "$touchpad"; then
             gdbus call --session --dest org.kde.KWin --object-path "$dev" \
                 --method org.freedesktop.DBus.Properties.Set \
                 org.kde.KWin.InputDevice naturalScroll "<true>" 2>/dev/null || true
@@ -249,6 +253,10 @@ if command -v qdbus6 &>/dev/null; then
     done
 fi
 
-echo "Disabled mouse acceleration"
+echo "Enabled natural scrolling for touchpads"
+
+# ── 11. Disable shake cursor (accessibility) ──────────────────
+kwriteconfig6 --file "$HOME/.config/kwinrc" --group Plugins --key shakecursorEnabled "false"
+echo "Disabled shake cursor"
 
 echo "Cursor setup complete: $CURSOR_NAME @ ${CURSOR_SIZE}px"
