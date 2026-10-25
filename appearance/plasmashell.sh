@@ -11,7 +11,7 @@ sleep 1
 LIVE_APPLETS="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
 if [[ -f "$LIVE_APPLETS" ]]; then
     # Remove any containment with plugin=org.kde.panel (formfactor=2)
-    python3 << 'PYEOF'
+    python3 - "$LIVE_APPLETS" << 'PYEOF'
 import configparser, sys
 cfg = configparser.ConfigParser(strict=False)
 cfg.optionxform = str

@@ -29,4 +29,22 @@ kwriteconfig6 \
     --key Image \
     "file://$WALL"
 
-echo "Wallpaper copied."
+# Also set via Plasma's wallpaper plugin config (for all activities/screens)
+kwriteconfig6 \
+    --file plasma-org.kde.plasma.desktop-appletsrc \
+    --group Containments \
+    --group 1 \
+    --group Wallpaper \
+    --group org.kde.image \
+    --group General \
+    --key Image \
+    "file://$WALL" 2>/dev/null || true
+
+# If Plasma is running, restart it to pick up wallpaper
+if pgrep -x plasmashell >/dev/null; then
+    kquitapp6 plasmashell 2>/dev/null || true
+    sleep 1
+    kstart5 plasmashell 2>/dev/null || plasmashell --replace &
+fi
+
+echo "Wallpaper applied."
