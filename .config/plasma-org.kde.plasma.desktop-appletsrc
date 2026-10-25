@@ -4,24 +4,8 @@ RightButton;NoModifier=org.kde.contextmenu
 [ActionPlugins][1]
 RightButton;NoModifier=org.kde.contextmenu
 
-[Containments][1]
-ItemGeometries-1920x1080=
-ItemGeometriesHorizontal=
-activityId=0c2002fc-72d1-48d4-8cc6-af3ab53afb18
-formfactor=0
-immutability=1
-lastScreen=0
-location=0
-plugin=org.kde.plasma.folder
-wallpaperplugin=org.kde.image
-
-[Containments][1][ConfigDialog]
-DialogHeight=630
-DialogWidth=810
-
 [Containments][1][Wallpaper][org.kde.image][General]
-Image=file://$HOME/Pictures/Wallpapers/f18950144.png
-SlidePaths=/usr/share/wallpapers/
+Image=file:///home/caue/Pictures/Wallpapers/f18950144.png
 
 [Containments][2]
 activityId=
@@ -88,7 +72,12 @@ DialogWidth=810
 immutability=1
 plugin=org.kde.plasma.icontasks
 
+[Containments][2][Applets][5][Configuration][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
+
 [Containments][2][Applets][5][Configuration][General]
+iconSpacing=0
 launchers=preferred://filemanager,applications:helium.desktop
 
 [Containments][2][Applets][6]
@@ -99,7 +88,7 @@ plugin=org.kde.plasma.marginsseparator
 activityId=
 formfactor=0
 immutability=1
-lastScreen=-1
+lastScreen=0
 location=0
 plugin=org.kde.plasma.systemtray
 popupHeight=436
@@ -152,6 +141,10 @@ plugin=org.kde.plasma.mediacontroller
 immutability=1
 plugin=org.kde.plasma.gamemode
 
+[Containments][2][Applets][7][Applets][36]
+immutability=1
+plugin=org.kde.plasma.dwellclicker
+
 [Containments][2][Applets][7][Applets][9]
 immutability=1
 plugin=org.kde.plasma.clipboard
@@ -161,10 +154,10 @@ DialogHeight=630
 DialogWidth=810
 
 [Containments][2][Applets][7][General]
-extraItems=org.kde.plasma.bluetooth,org.kde.plasma.devicenotifier,org.kde.plasma.notifications,org.kde.kscreen,org.kde.plasma.volume,org.kde.plasma.brightness,org.kde.plasma.networkmanagement,org.kde.plasma.battery,org.kde.plasma.clipboard,org.kde.plasma.mediacontroller
+extraItems=org.kde.plasma.bluetooth,org.kde.plasma.devicenotifier,org.kde.plasma.notifications,org.kde.kscreen,org.kde.plasma.volume,org.kde.plasma.brightness,org.kde.plasma.networkmanagement,org.kde.plasma.battery,org.kde.plasma.clipboard,org.kde.plasma.mediacontroller,org.kde.plasma.dwellclicker
 hiddenItems=org.kde.plasma.brightness,org.kde.plasma.clipboard,org.kde.plasma.mediacontroller
 iconSpacing=1
-knownItems=org.kde.plasma.bluetooth,org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.manage-inputmethod,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.weather,org.kde.kscreen,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.keyboardlayout,org.kde.plasma.networkmanagement,org.kde.plasma.volume
+knownItems=org.kde.plasma.bluetooth,org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.manage-inputmethod,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.weather,org.kde.kscreen,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.keyboardlayout,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.dwellclicker
 shownItems=org.kde.plasma.volume,org.kde.plasma.networkmanagement,org.kde.plasma.battery
 
 [Containments][2][Applets][7][Shortcuts]
@@ -172,6 +165,20 @@ global=
 
 [Containments][2][General]
 AppletOrder=33;5;7;6;35;25
+
+[Containments][37]
+ItemGeometries-1920x1080=
+ItemGeometriesHorizontal=
+activityId=261ff64e-e83b-4dd9-8c4c-1355c2f148cd
+formfactor=0
+immutability=1
+lastScreen=0
+location=0
+plugin=org.kde.plasma.folder
+wallpaperplugin=org.kde.image
+
+[Containments][37][Wallpaper][org.kde.image][General]
+Image=file:///home/caue/Pictures/Wallpapers/f18950144.png
 
 [ScreenMapping]
 itemsOnDisabledScreens=
