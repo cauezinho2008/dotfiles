@@ -43,7 +43,8 @@ curl -fsSL https://raw.githubusercontent.com/cauezinho2008/dotfiles/main/setup.s
 
 This launches the interactive installer
 
-<img width="836" height="561" alt="image" src="https://github.com/user-attachments/assets/bfe7e5e1-7a42-4c8f-9de4-3c5675d2400b" />
+<img width="497" height="254" alt="image" src="https://github.com/user-attachments/assets/ad070adb-b178-45dd-bc0e-c1cd3769588c" />
+
 
 
 where you can:
@@ -61,7 +62,8 @@ Everything is modular, so you can choose only what you want.
 
 it also features previews of currently selected item trought the [`/preview`](./preview) folder:
 
-<img width="795" height="460" alt="Screenshot_20260712_094055" src="https://github.com/user-attachments/assets/8ef711fe-cc1b-40c2-9ae5-792561552088" />
+<img width="847" height="486" alt="image" src="https://github.com/user-attachments/assets/deeef0fd-721a-4b3f-addb-014b6d934a21" />
+
 
 > [!NOTE]
 > Its recommended to reboot after installation,
