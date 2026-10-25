@@ -10,7 +10,7 @@ SidePanelDrawFrame=false
 SliderTickmarks=false
 TabBarDrawCenteredTabs=false
 ToolBarDrawItemSeparator=true
-ViewDrawFocusIndicator=true
+ViewDrawFocusIndicator=false
 WindowDragMode=WD_FULL
 
 [Windeco]

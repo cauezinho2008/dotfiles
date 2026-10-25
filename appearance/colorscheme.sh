@@ -94,7 +94,7 @@ kwriteconfig6 --file breezerc --group Common --key MenuOpacity 40
 kwriteconfig6 --file breezerc --group Common --key OutlineCloseButton true
 kwriteconfig6 --file breezerc --group Style --key ToolBarDrawItemSeparator true
 kwriteconfig6 --file breezerc --group Style --key TabBarDrawCenteredTabs false
-kwriteconfig6 --file breezerc --group Style --key ViewDrawFocusIndicator true
+kwriteconfig6 --file breezerc --group Style --key ViewDrawFocusIndicator false
 kwriteconfig6 --file breezerc --group Style --key SliderTickmarks false
 kwriteconfig6 --file breezerc --group Style --key ExtendedResizeHandles true
 kwriteconfig6 --file breezerc --group Style --key WindowDragMode WD_FULL
