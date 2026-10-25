@@ -29,3 +29,4 @@ gwenviewrc
 kcalcrc
 ksplashrc
 kwriterc
+klaunchrc

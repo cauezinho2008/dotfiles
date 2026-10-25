@@ -1,0 +1,4 @@
+[FeedbackStyle]
+BusyCursor=Bouncing
+BusyCursorTimeout=10
+FeedbackEnabled=true

@@ -1,0 +1,27 @@
+
+include "/usr/share/nano/*.nanorc"
+
+## Interface
+set mouse
+
+##colors
+set titlecolor brightblue
+set keycolor white
+set functioncolor brightblue
+set errorcolor red
+set selectedcolor brightblue,white
+
+## Editing
+set autoindent
+set smarthome
+set tabsize 4
+set afterends
+
+## Long lines
+set softwrap
+set atblanks
+
+## Searching
+set regexp
+
+set numbercolor brightblue

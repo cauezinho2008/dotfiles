@@ -1,0 +1,68 @@
+{
+  "source_paths": [
+    "/home/caue/Music"
+  ],
+  "track_path": "/home/caue/Music/Magia_das_Estrelas.flac",
+  "position_secs": 31.919083333333333,
+  "shuffle": false,
+  "volume": 100,
+  "eq_preset": "Flat",
+  "effects_preset": "None",
+  "repeat_mode": "off",
+  "rg_mode": "track",
+  "device": null,
+  "exclusive": false,
+  "crossfeed_preset": "Off",
+  "balance": 0,
+  "theme": "classic",
+  "eq_gains": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "eq_custom": false,
+  "eq_types": [
+    "peak",
+    "peak",
+    "peak",
+    "peak",
+    "peak",
+    "peak",
+    "peak",
+    "peak",
+    "peak",
+    "peak"
+  ],
+  "eq_freqs": [
+    31.0,
+    62.0,
+    125.0,
+    250.0,
+    500.0,
+    1000.0,
+    2000.0,
+    4000.0,
+    8000.0,
+    16000.0
+  ],
+  "eq_qs": [
+    1.41,
+    1.41,
+    1.41,
+    1.41,
+    1.41,
+    1.41,
+    1.41,
+    1.41,
+    1.41,
+    1.41
+  ],
+  "eq_preamp": 0.0
+}

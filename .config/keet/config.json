@@ -1,0 +1,12 @@
+
+{
+  "theme": "classic",
+  "classic_use_truecolor": true,
+  "classic_colors": {
+    "highlight": "#3584E4",
+    "warning": "#62A0EA",
+    "error": "#ED333B"
+  },
+  "viz": "spectrum",
+  "viz_style": "bars"
+}

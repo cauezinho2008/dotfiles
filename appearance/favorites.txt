@@ -3,7 +3,7 @@ org.prismlauncher.PrismLauncher.desktop
 systemsettings.desktop
 org.kde.kdenlive.desktop
 org.kde.dolphin.desktop
-mcpelauncher-ui-git.desktop
+io.github.Faugus.faugus-launcher.desktop
 steam.desktop
 ardour9.desktop
 kitty.desktop
