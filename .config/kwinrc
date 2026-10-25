@@ -1,5 +1,8 @@
- [Compositing]
+[Compositing]
 AllowTearing=false
+
+[Compositor]
+AnimationSpeed=1
 
 [Desktops]
 Id_1=7fa27feb-c29f-4e5c-a5fe-a9c4b1173664
@@ -23,10 +26,10 @@ InactivityDuration=15
 BorderActivate=9
 
 [MouseBindings]
-CommandAllKey=Meta
 CommandAll1=Move
 CommandAll2=Operations menu
 CommandAll3=Resize
+CommandAllKey=Meta
 CommandAllWheel=Maximize/Restore
 
 [Plugins]
@@ -37,6 +40,7 @@ center-new-windowsEnabled=true
 gamecontrollerEnabled=true
 hidecursorEnabled=true
 magiclampEnabled=true
+morphing_popupsEnabled=true
 mousemarkEnabled=true
 scaleEnabled=false
 shakecursorEnabled=false
@@ -44,6 +48,10 @@ squashEnabled=false
 wobblywindowsEnabled=true
 
 [Tiling][71f5def4-43d6-4b2d-b4a5-d57af755105e][7890dab1-56a1-4370-9d62-cc107d1c0184]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][7fa27feb-c29f-4e5c-a5fe-a9c4b1173664][2d44b17e-916f-4583-a12b-55f08a1fa1c7]
 padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
@@ -65,3 +73,10 @@ VirtualKeyboardMode=1
 
 [Windows]
 ActivationDesktopPolicy=2
+
+[Xwayland]
+Scale=1
+
+[org.kde.kdecoration2]
+BorderSize=Normal
+ShowToolTips=false

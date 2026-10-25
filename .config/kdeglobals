@@ -1,11 +1,9 @@
 [ColorEffects:Disabled]
-ChangeSelectionColor=
 Color=56,56,56
 ColorAmount=0
 ColorEffect=0
 ContrastAmount=0.65
 ContrastEffect=1
-Enable=
 IntensityAmount=0.1
 IntensityEffect=2
 
@@ -133,15 +131,14 @@ ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [General]
-BrowserApplication=helium.desktop
 ColorScheme=BreezeDarker
+ColorSchemeHash=e62942647749415fe69363c00cfcac9478730953
 LastUsedCustomAccentColor=4,118,208
 TerminalApplication=kitty
 TerminalService=kitty.desktop
-UseSystemBell=true
 XftAntialias=true
 XftHintStyle=hintslight
-XftSubPixel=none
+XftSubPixel=rgb
 fixed=ProFont IIx Nerd Font Mono,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
 font=ProFont IIx Nerd Font Mono,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
 menuFont=ProFont IIx Nerd Font Mono,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
@@ -149,13 +146,16 @@ smallestReadableFont=ProFont IIx Nerd Font Mono,8,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 toolBarFont=ProFont IIx Nerd Font Mono,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0
 
 [KDE]
-LookAndFeelPackage=brezze darker
+AnimationSpeed=1
+LookAndFeelPackage=org.kde.breezedark.desktop
+RecentDocuments=false
 ShowDeleteCommand=false
 contrast=4
 frameContrast=0.2
+widgetStyle=Breeze
 
 [KFileDialog Settings]
-Allow Expansion=true
+Allow Expansion=false
 Automatically select filename extension=true
 Breadcrumb Navigation=true
 Decoration position=2
@@ -164,26 +164,21 @@ Show Inline Previews=true
 Show Preview=false
 Show Speedbar=true
 Show hidden files=true
+ShowRecentFiles=false
+ShowRemote=false
 Sort by=Name
 Sort directories first=true
 Sort hidden files last=false
 Sort reversed=false
-Speedbar Width=105
-View Style=Simple
+Speedbar Width=174
+View Style=DetailTree
 
-[KScreen]
-ScreenScaleFactors=eDP-1=1;
-XwaylandClientsScale=false
-
-[Locale]
-BinaryUnitDialect=1
+[KShortcutsDialog Settings]
+Dialog Size=668,480
 
 [PreviewSettings]
 EnableRemoteFolderThumbnail=false
 MaximumRemoteSize=0
-
-[Shortcuts]
-ConfigureToolbars=Ctrl+Alt+<
 
 [WM]
 activeBackground=39,44,49

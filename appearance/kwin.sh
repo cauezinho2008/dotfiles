@@ -86,6 +86,9 @@ kwriteconfig6 --file breezerc --group Windeco --key DrawBorderOnMaximizedWindows
 kwriteconfig6 --file breezerc --group Windeco --key roundedCorners true
 kwriteconfig6 --file breezerc --group Windeco --key ShadowStrength 255
 
+# --- Global animation speed (affects menus, tray, minimize/maximize) ---
+kwriteconfig6 --file kdeglobals --group KDE --key AnimationSpeed 1
+kwriteconfig6 --file kwinrc --group Compositor --key AnimationSpeed 1
 
 echo "Installing KWin effects from KDE Store..."
 for entry in "${KWIN_EFFECTS[@]}"; do
