@@ -77,6 +77,9 @@ kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key 
 kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Mouse --key cursorSize "$CURSOR_SIZE"
 
 # Apply to current user config too
+# Enable NumLock on startup
+kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Keyboard --key NumLock "1"
+kwriteconfig6 --file "$HOME/.config/kdedefaults/kcminputrc" --group Keyboard --key NumLock "1"
 kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key cursorTheme "$CURSOR_NAME"
 kwriteconfig6 --file "$HOME/.config/kcminputrc" --group Mouse --key cursorSize "$CURSOR_SIZE"
 

@@ -33,6 +33,9 @@ while read -r GROUP; do
         "$ORDERING"
 done
 
+# Notify kactivitymanagerd of the change
+qdbus org.kde.kactivitymanagerd /ActivityManager/Activities org.kde.kactivitymanagerd.Activities.updateActivity "" 2>/dev/null || true
+
 echo "Updating SQLite database..."
 
 {
@@ -45,4 +48,10 @@ echo "Updating SQLite database..."
 
     echo "COMMIT;"
 } | sqlite3 "$DB"
+
+# Restart plasmashell to pick up favorites (optional, but ensures immediate effect)
+# kquitapp6 plasmashell 2>/dev/null || true
+# sleep 1
+# kstart5 plasmashell 2>/dev/null || plasmashell --replace &
+
 echo "Done."
