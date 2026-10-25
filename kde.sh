@@ -118,6 +118,7 @@ echo
 while IFS= read -r item; do
     [[ -z "$item" ]] && continue
     echo " • $item"
+
 done <<< "$SELECTED"
 
 echo
@@ -154,7 +155,7 @@ fi
 done < "$ORDER_FILE"
 
 # ==========================================================
-# Reload & Restart
+# Reload & Restart (robust, survives terminal close)
 # ==========================================================
 
 echo
@@ -184,10 +185,17 @@ sleep 0.5
 # Disable splash screen
 kwriteconfig6 --file ksplashrc --group KSplash --key Engine none
 
-# Restart plasmashell to pick up panel/applet changes
-kquitapp6 plasmashell 2>/dev/null || true
-sleep 1
-kstart6 plasmashell >/dev/null 2>&1 || plasmashell >/dev/null 2>&1 &
+# Robust plasmashell restart - survives terminal close
+# Use systemctl if available, otherwise nohup with proper detachment
+if systemctl --user is-active plasma-plasmashell.service >/dev/null 2>&1; then
+    systemctl --user restart plasma-plasmashell.service
+else
+    kquitapp6 plasmashell 2>/dev/null || true
+    sleep 1
+    # Use setsid + nohup + proper redirections to fully detach
+    setsid nohup plasmashell --replace >/dev/null 2>&1 &
+    disown
+fi
 
 echo
 gum style \
