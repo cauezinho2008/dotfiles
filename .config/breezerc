@@ -5,6 +5,7 @@ OutlineCloseButton=true
 [Style]
 DockWidgetDrawFrame=false
 ExtendedResizeHandles=true
+MenuItemDrawStrongFocus=false
 MenuOpacity=40
 SidePanelDrawFrame=false
 SliderTickmarks=false
