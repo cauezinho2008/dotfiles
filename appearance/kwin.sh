@@ -107,3 +107,23 @@ for entry in "${KWIN_SCRIPTS[@]}"; do
 done
 
 echo "KWin config applied (animations, effects, scripts)."
+
+# --- Skyler Animated Plasma Task Manager ---
+if ! kpackagetool6 --type=Plasma/Applet --list 2>/dev/null | grep -q "org.kde.plasma.icontasks.skyler"; then
+    echo "Installing Skyler Animated Plasma Task Manager..."
+    tmpdir=$(mktemp -d)
+    git clone https://github.com/SkyShadowHero/Animated-plasma-task.git "$tmpdir/Animated-plasma-task" 2>/dev/null || {
+        echo "  Failed to clone Skyler task manager"
+        rm -rf "$tmpdir"
+    }
+    if [[ -d "$tmpdir/Animated-plasma-task" ]]; then
+        (
+            cd "$tmpdir/Animated-plasma-task"
+            rm -rf build
+            mkdir build
+            cd build
+            cmake .. -DCMAKE_INSTALL_PREFIX=/usr >/dev/null 2>&1 && make -j$(nproc) >/dev/null 2>&1 && sudo make install >/dev/null 2>&1 && echo "  Skyler task manager installed"
+        ) || echo "  Failed to build/install Skyler task manager"
+        rm -rf "$tmpdir"
+    fi
+fi
