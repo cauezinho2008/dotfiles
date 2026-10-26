@@ -27,30 +27,6 @@ DialogWidth=810
 [Containments][2][Applets][25][Shortcuts]
 global=Meta+D
 
-[Containments][2][Applets][33]
-immutability=1
-plugin=org.kde.plasma.kickoff
-
-[Containments][2][Applets][33][Configuration]
-popupHeight=501
-popupWidth=715
-
-[Containments][2][Applets][33][Configuration][ConfigDialog]
-DialogHeight=630
-DialogWidth=810
-
-[Containments][2][Applets][33][Configuration][General]
-applicationsDisplay=0
-compactMode=true
-enableGlow=true
-favoritesPortedToKAstats=true
-glowColor=1
-highlightNewlyInstalledApps=false
-icon=org.cachyos.hello
-launcherPosition=1
-showActionButtonCaptions=false
-systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
-
 [Containments][2][Applets][35]
 immutability=1
 plugin=org.kde.plasma.digitalclock
@@ -68,17 +44,41 @@ showDate=false
 DialogHeight=630
 DialogWidth=810
 
-[Containments][2][Applets][5]
+[Containments][2][Applets][39]
 immutability=1
-plugin=org.kde.plasma.icontasks
+plugin=org.kde.plasma.kickoff.skyler
 
-[Containments][2][Applets][5][Configuration][ConfigDialog]
+[Containments][2][Applets][39][Configuration]
+popupHeight=501
+popupWidth=715
+
+[Containments][2][Applets][39][Configuration][ConfigDialog]
 DialogHeight=630
 DialogWidth=810
 
-[Containments][2][Applets][5][Configuration][General]
+[Containments][2][Applets][39][Configuration][General]
+applicationsDisplay=0
+compactMode=true
+favoritesPortedToKAstats=true
+highlightNewlyInstalledApps=false
+hoverEffect=true
+icon=org.cachyos.hello
+showActionButtonCaptions=false
+systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
+useCustomDecorations=true
+
+[Containments][2][Applets][40]
+immutability=1
+plugin=org.kde.plasma.icontasks.skyler
+
+[Containments][2][Applets][40][Configuration][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
+
+[Containments][2][Applets][40][Configuration][General]
+hoverEffect=false
 iconSpacing=0
-launchers=preferred://filemanager,applications:helium.desktop
+launchers=preferred://filemanager,preferred://browser
 
 [Containments][2][Applets][6]
 immutability=1
@@ -164,7 +164,7 @@ shownItems=org.kde.plasma.volume,org.kde.plasma.networkmanagement,org.kde.plasma
 global=
 
 [Containments][2][General]
-AppletOrder=33;5;7;6;35;25
+AppletOrder=39;40;7;6;35;25
 
 [Containments][37]
 ItemGeometries-1920x1080=
@@ -179,6 +179,17 @@ wallpaperplugin=org.kde.image
 
 [Containments][37][Wallpaper][org.kde.image][General]
 Image=file:///home/caue/Pictures/Wallpapers/f18950144.png
+
+[Containments][38]
+ItemGeometries-1536x864=
+ItemGeometriesHorizontal=
+activityId=261ff64e-e83b-4dd9-8c4c-1355c2f148cd
+formfactor=0
+immutability=1
+lastScreen=1
+location=0
+plugin=org.kde.plasma.folder
+wallpaperplugin=org.kde.image
 
 [ScreenMapping]
 itemsOnDisabledScreens=
